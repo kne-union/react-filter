@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/react-filter/static/css/main.20d692e1.css",
+    "main.js": "/react-filter/static/js/main.7347caba.js",
+    "static/js/295.5bba23e2.chunk.js": "/react-filter/static/js/295.5bba23e2.chunk.js",
+    "index.html": "/react-filter/index.html",
+    "main.20d692e1.css.map": "/react-filter/static/css/main.20d692e1.css.map",
+    "main.7347caba.js.map": "/react-filter/static/js/main.7347caba.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.20d692e1.css",
+    "static/js/main.7347caba.js"
+  ]
+}
