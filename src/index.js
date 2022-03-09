@@ -20,12 +20,24 @@ const Filter = ({ displayLine, list, value, onChange }) => {
     const target = Object.assign({}, value, { [name]: item });
     Object.keys(target).forEach((key) => {
       const item = target[key];
-      if (item === void (0) || item === null) {
-        delete target[key];
-      }
-      if (Array.isArray(item) && item.length === 0) {
-        delete target[key];
-      }
+      (() => {
+        if (Array.isArray(item) && item.length > 0 && item.every((item) => item.value === void (0) || item.value === null || item.value === "")) {
+          delete target[key];
+          return;
+        }
+        if (Array.isArray(item) && item.length === 0) {
+          delete target[key];
+          return;
+        }
+        if (item && Array.isArray(item.value) && (item.value.length === 0 || item.value.every((item) => item === void (0) || item === null || item === ""))) {
+          delete target[key];
+          return;
+        }
+        if (item === void (0) || item === null || (!Array.isArray(item) && item && (item.value === void (0) || item.value === null || item.value === ""))) {
+          delete target[key];
+          return;
+        }
+      })();
     });
     onChange(target);
   };

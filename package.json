@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "处理文本省略号",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

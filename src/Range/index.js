@@ -14,10 +14,6 @@ export const RangeInner = ({
     if (!Array.isArray(value)) {
       return false;
     }
-    if (value[0] === null && value[1] === null) {
-      setError("最大值和最小值不能同时为空");
-      return false;
-    }
     if (isNumber(value[1]) && value[0] > value[1]) {
       setError("最大值不能小于最小值");
       return false;
