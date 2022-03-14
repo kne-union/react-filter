@@ -6,7 +6,7 @@ const { City, List, Range, Text, Selector, Check } = Filter.type;
 
 const App = () => {
   const [value, setValue] = useState({});
-  return <><Filter value={value} onChange={(value) => {
+  return <><Filter displayLine={0} value={value} onChange={(value) => {
     setValue(value);
     console.log(value);
   }} list={[[<City label="目前城市" name="currentCity" size={5} />], [<List label="学历" name="degree" size={1}>

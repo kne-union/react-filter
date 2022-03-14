@@ -7,8 +7,12 @@
     margin: 5px auto;
   }
 
+  &-item {
+    line-height: 32px;
+  }
+
   &-item-label {
-    color: #888;
+    font-weight: bold;
     font-size: 14px;
   }
 
@@ -45,5 +49,9 @@
     top: 0;
     right: -10px;
     transform: translateX(100%);
+  }
+
+  &-switch-btn {
+    transform: translateY(-130%);
   }
 }

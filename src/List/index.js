@@ -81,7 +81,7 @@ List.Item = ({ value, label, ...props }) => {
   const { currentValue, createCheckedChangeHandler } = useContext(context);
   const itemProps = {};
   if (value !== void (0)) {
-    itemProps.checked = currentValue.findIndex((item) => isEqual(item.value, value)) > -1;
+    itemProps.checked = currentValue.findIndex((item) => isEqual(get(item,'value'), value)) > -1;
     itemProps.onChange = createCheckedChangeHandler({ label, value });
   }
 

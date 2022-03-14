@@ -2,7 +2,7 @@ import React from "react";
 import { Space } from "antd";
 
 const FilterItem = ({ label, children }) => {
-  return <Space>
+  return <Space className="react-filter-item">
     <div className="react-filter-item-label">{label}:</div>
     <div className="react-filter-item-children">{children}</div>
   </Space>;
