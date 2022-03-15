@@ -38,17 +38,12 @@ const SearchButton = ({
   useEffect(() => {
     activeChangeRef.current && activeChangeRef.current(active);
   }, [active]);
-  let timer;
   return <div className={classnames("react-filter-search-button", {
     "is-active": active
   })} ref={ref} onMouseEnter={() => {
-    clearTimeout(timer);
     !active && setActive(true);
   }} onMouseLeave={() => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
       active && setActive(false);
-    }, 200);
   }}>
     <div className="inner">
       <div>{children({ value, setValue, setActive })}</div>
