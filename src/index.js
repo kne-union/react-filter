@@ -49,22 +49,27 @@ const Filter = ({displayLine, isExtra, list, value: originValue, onChange}) => {
         const target = Object.assign({}, value, {[name]: item});
         onChange(filterNull(target));
     };
+
     return <Provider value={{
         value, onChange: changeHandler
     }}>
         <div className="react-filter">
-            <FilterItem className="react-filter-selected" label="筛选项">{Object.keys(value).map((key) => {
-                const item = value[key];
-                if (!item) return null;
-                if (Array.isArray(item) && item.length === 0) return null;
-                return <Tag key={key} closable onClose={() => {
-                    changeHandler(key, null);
-                }}>{Array.isArray(item) ? item.map(({label}) => label).join(",") : item.label}</Tag>;
-            })}</FilterItem>
-            {renderList(isExtra ? basicList : list)}
-            {display ? <><Divider className="react-filter-divider"/>{renderList(moreList)}</> :
+            <div className="react-filter-inner">
+                <FilterItem className="react-filter-selected" label="筛选项">{Object.keys(value).map((key) => {
+                    const item = value[key];
+                    if (!item) return null;
+                    if (Array.isArray(item) && item.length === 0) return null;
+                    return <Tag key={key} closable onClose={() => {
+                        changeHandler(key, null);
+                    }}>{Array.isArray(item) ? item.map(({label}) => label).join(",") : item.label}</Tag>;
+                })}</FilterItem>
+                {renderList(isExtra ? basicList : list)}
+            </div>
+            {display ? <><Divider className="react-filter-divider"/>
+                    <div className="react-filter-inner">{renderList(moreList)}</div>
+                </> :
                 <div className="react-filter-divider-close"/>}
-            {isExtra ? <Row className="react-filter-switch-btn" justify="end">
+            {isExtra && list.length > displayLine ? <Row className="react-filter-switch-btn" justify="end">
                 <Col><Button type="link" onClick={() => {
                     setDisplay((display) => !display);
                 }}>{display ? "收起筛选条件" : "展开筛选条件"}</Button></Col>
@@ -87,5 +92,7 @@ export {createExtraButton, withMoreExtraButton} from "./MoreExtraButton";
 export {default as SearchButton} from "./SearchButton";
 
 export {default as FilterItem, withFilterItem} from "./FilterItem";
+
+export {useConsumer as useFilterContext} from './context';
 
 export default Filter;

@@ -3,6 +3,10 @@
 }
 
 .react-filter {
+  &-inner {
+    padding-right: 116px;
+  }
+
   &-divider {
     margin: 5px auto;
   }

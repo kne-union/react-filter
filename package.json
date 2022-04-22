@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "0.1.9",
+  "version": "0.1.13",
   "description": "筛选器",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
