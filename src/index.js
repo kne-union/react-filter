@@ -36,7 +36,7 @@ const filterNull = (item) => {
     return target;
 };
 
-const Filter = ({displayLine, isExtra, list, value: originValue, onChange}) => {
+const Filter = ({displayLine, isExtra, list, label, unfoldText, foldText, extra, value: originValue, onChange}) => {
     const value = useMemo(() => {
         return filterNull(originValue);
     }, [originValue]);
@@ -55,14 +55,21 @@ const Filter = ({displayLine, isExtra, list, value: originValue, onChange}) => {
     }}>
         <div className="react-filter">
             <div className="react-filter-inner">
-                <FilterItem className="react-filter-selected" label="筛选项">{Object.keys(value).map((key) => {
-                    const item = value[key];
-                    if (!item) return null;
-                    if (Array.isArray(item) && item.length === 0) return null;
-                    return <Tag key={key} closable onClose={() => {
-                        changeHandler(key, null);
-                    }}>{Array.isArray(item) ? item.map(({label}) => label).join(",") : item.label}</Tag>;
-                })}</FilterItem>
+                <div>
+                    <Space>
+                        <FilterItem className="react-filter-selected" label={label}>
+                            {Object.keys(value).map((key) => {
+                                const item = value[key];
+                                if (!item) return null;
+                                if (Array.isArray(item) && item.length === 0) return null;
+                                return <Tag key={key} closable onClose={() => {
+                                    changeHandler(key, null);
+                                }}>{Array.isArray(item) ? item.map(({label}) => label).join(",") : item.label}</Tag>;
+                            })}
+                        </FilterItem>
+                        <div>{extra}</div>
+                    </Space>
+                </div>
                 {renderList(isExtra ? basicList : list)}
             </div>
             {display ? <><Divider className="react-filter-divider"/>
@@ -72,7 +79,7 @@ const Filter = ({displayLine, isExtra, list, value: originValue, onChange}) => {
             {isExtra && list.length > displayLine ? <Row className="react-filter-switch-btn" justify="end">
                 <Col><Button type="link" onClick={() => {
                     setDisplay((display) => !display);
-                }}>{display ? "收起筛选条件" : "展开筛选条件"}</Button></Col>
+                }}>{display ? foldText : unfoldText}</Button></Col>
             </Row> : null}
         </div>
     </Provider>;
@@ -83,7 +90,15 @@ Filter.type = {
 };
 
 Filter.defaultProps = {
-    displayLine: 2, isExtra: true, list: [[]], value: {}, onChange: () => {
+    label: '筛选项',
+    unfoldText: '展开',
+    foldText: '收起',
+    displayLine: 2,
+    isExtra: true,
+    list: [[]],
+    value: {},
+    extra: null,
+    onChange: () => {
     }
 };
 
