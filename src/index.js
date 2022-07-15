@@ -36,11 +36,22 @@ const filterNull = (item) => {
     return target;
 };
 
-const Filter = ({displayLine, isExtra, list, label, unfoldText, foldText, extra, value: originValue, onChange}) => {
+const Filter = ({
+                    displayLine,
+                    defaultDisplay,
+                    isExtra,
+                    list,
+                    label,
+                    unfoldText,
+                    foldText,
+                    extra,
+                    value: originValue,
+                    onChange
+                }) => {
     const value = useMemo(() => {
         return filterNull(originValue);
     }, [originValue]);
-    const [display, setDisplay] = useState(false);
+    const [display, setDisplay] = useState(defaultDisplay);
     const basicList = list.slice(0, displayLine), moreList = list.slice(displayLine);
     const renderList = (list) => list.map((item, index) => {
         return <Space key={index}>{item.map((item, index) => cloneElement(item, {key: index}))}</Space>;
@@ -94,6 +105,7 @@ Filter.defaultProps = {
     unfoldText: '展开',
     foldText: '收起',
     displayLine: 2,
+    defaultDisplay: false,
     isExtra: true,
     list: [[]],
     value: {},
