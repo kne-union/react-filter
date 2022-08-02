@@ -3,12 +3,12 @@ import {Button, Space} from "antd";
 import {useConsumer} from "../context";
 import useClickOutSide from "@kne/use-click-outside";
 import classnames from "classnames";
-import isFunction from "lodash/isFunction";
-import get from "lodash/get";
+import {get,isFunction} from "lodash";
 
 const SearchButton = ({
                           name,
                           size,
+                          isMore,
                           template,
                           children,
                           defaultValue,
@@ -39,23 +39,26 @@ const SearchButton = ({
         activeChangeRef.current && activeChangeRef.current(active);
     }, [active]);
     return <div className={classnames("react-filter-search-button", {
-        "is-active": active
+        "is-active": active && !isMore
     })} ref={ref} onMouseEnter={() => {
         !active && setActive(true);
     }} onMouseLeave={() => {
         active && setActive(false);
     }}>
-        <div className="inner">
+        <Space className="inner" size={0}>
             <div>{children({value, setValue, setActive})}</div>
-            {active ? <Button className="react-filter-search-confirm" size="small" type="primary" onClick={(e) => {
-                e.stopPropagation();
-                if (onBeforeSearch && onBeforeSearch(value) === false) {
-                    return;
-                }
-                onChange(name, Number.isInteger(size) && size > 1 ? [withTemplate(value)] : withTemplate(value));
-                setActive(false);
-                onSearch && onSearch({value});
-            }}>{buttonText}</Button> : null}</div>
+            {active || isMore ?
+                <Button className={classnames("react-filter-search-confirm", {
+                    "is-more": isMore
+                })} size="small" type="primary" onClick={(e) => {
+                    e.stopPropagation();
+                    if (onBeforeSearch && onBeforeSearch(value) === false) {
+                        return;
+                    }
+                    onChange(name, Number.isInteger(size) && size > 1 ? [withTemplate(value)] : withTemplate(value));
+                    setActive(false);
+                    onSearch && onSearch({value});
+                }}>{buttonText}</Button> : null}</Space>
     </div>;
 };
 

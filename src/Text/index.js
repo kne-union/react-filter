@@ -1,24 +1,45 @@
 import React from "react";
-import { Input } from "antd";
-import { withFilterItem } from "../FilterItem";
+import {Input, InputNumber} from "antd";
+import {withFilterItem} from "../FilterItem";
 import SearchButton from "../SearchButton";
 
-export const TextInner = ({ name, label, template, defaultActive, onBlur, onSearch, onActiveChange, ...props }) => {
-  return <SearchButton defaultActive={defaultActive} onBlur={onBlur} template={template} name={name} onSearch={onSearch}
-                       onActiveChange={(active) => {
-                         onActiveChange && onActiveChange(active);
-                       }}>
-    {({ value, setValue, setActive }) => <>
-      <Input size="small" {...props} value={value} onChange={(e) => {
-        setValue(e.target.value);
-      }} onFocus={() => {
-        setActive(true);
-      }} />
-    </>}
-  </SearchButton>;
+const withValue = (WrappedComponent, options = {}) => ({
+                                                           name,
+                                                           label,
+                                                           isMore,
+                                                           template,
+                                                           defaultActive,
+                                                           onBlur,
+                                                           onSearch,
+                                                           onBeforeSearch,
+                                                           onActiveChange,
+                                                           placeholder,
+                                                           ...props
+                                                       }) => {
+    return <SearchButton defaultActive={defaultActive} isMore={isMore} onBlur={onBlur} template={template} name={name}
+                         onSearch={onSearch}
+                         onBeforeSearch={onBeforeSearch}
+                         onActiveChange={(active) => {
+                             onActiveChange && onActiveChange(active);
+                         }}>
+        {({value, setValue, setActive}) => <>
+            <WrappedComponent size="small" {...props} placeholder={placeholder || label} value={value}
+                              onChange={(e) => {
+                                  setValue(options.getValue ? options.getValue(e) : e.target.value);
+                              }} onFocus={() => {
+                setActive(true);
+            }}/>
+        </>}
+    </SearchButton>;
 };
 
-const Text = withFilterItem(TextInner);
+export const TextInner = withValue(Input);
+const Text = withFilterItem(withValue(Input));
+Text.Number = withFilterItem(withValue(InputNumber, {
+    getValue: (value) => {
+        return value;
+    }
+}));
 
 export default Text;
 

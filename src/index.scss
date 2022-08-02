@@ -1,7 +1,3 @@
-.space-full {
-  width: 100%;
-}
-
 .react-filter {
   &-inner {
     padding-right: 116px;
@@ -11,16 +7,44 @@
     margin: 5px auto;
   }
 
+  &-line {
+    min-width: 100%;
+  }
+
   &-item {
+    white-space: nowrap;
     line-height: 32px;
+
+    .ant-input, .ant-select, .ant-input-number {
+      min-width: 150px;
+    }
+
+    .react-filter-range .ant-input-number {
+      min-width: auto;
+    }
+  }
+
+  &-item-popover {
+    .ant-input, .ant-select, .ant-input-number {
+      min-width: 150px;
+    }
+
+    .react-filter-range .ant-input-number {
+      min-width: auto;
+    }
   }
 
   &-item-label {
     font-size: 14px;
+
+    &.is-more {
+      cursor: pointer;
+    }
   }
 
   &-item-children {
     display: flex;
+    align-items: center;
   }
 
   &-search-button {
@@ -60,10 +84,16 @@
   }
 
   &-search-confirm {
-    position: absolute;
-    top: 50%;
-    right: -10px;
-    transform: translate(100%, -50%);
+    &.is-more {
+      margin-left: 8px;
+    }
+
+    &:not(.is-more) {
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      transform: translate(100%, -50%);
+    }
   }
 
   &-switch-btn {

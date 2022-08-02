@@ -1,0 +1,49 @@
+{
+  "isFull": true,
+  "list": [
+    {
+      "title": "基础示例",
+      "description": "展示一个筛选器的普通模式",
+      "code": "./base.js",
+      "scope": [
+        {
+          "name": "reactFilter",
+          "packageName": "@kne/react-filter"
+        },
+        {
+          "packageName": "@kne/react-filter/dist/index.css"
+        },
+        {
+          "name": "message",
+          "packageName": "antd/lib/message"
+        },
+        {
+          "name": "_",
+          "packageName": "lodash"
+        }
+      ],
+      "__scope_notes": {
+        "name": "这里填写包导出名称(这是一个注释字段，需要添加到[scope]中)",
+        "packageName": "这里填写包名(这是一个注释字段，需要添加到[scope]中)"
+      }
+    },
+    {
+      "title": "简单示例",
+      "description": "展示一个简单的筛选项，一般放在列表页title extra位置",
+      "code": "./simple.js",
+      "scope": [
+        {
+          "name": "reactFilter",
+          "packageName": "@kne/react-filter"
+        },
+        {
+          "packageName": "@kne/react-filter/dist/index.css"
+        },
+        {
+          "name": "space",
+          "packageName": "antd/lib/space"
+        }
+      ]
+    }
+  ]
+}
