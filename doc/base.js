@@ -4,7 +4,6 @@ const {default: antdMessage} = message;
 
 const {City, List, Range, Text, Selector, Check, DateTime} = Filter.type;
 
-console.log(Text.Number);
 const {isNumber} = _;
 
 const BaseExample = () => {

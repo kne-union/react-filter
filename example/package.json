@@ -12,7 +12,8 @@
     "@kne/react-filter": "file:..",
     "antd": "^4.22.2",
     "react": "file:../node_modules/react",
-    "react-dom": "file:../node_modules/react-dom"
+    "react-dom": "file:../node_modules/react-dom",
+    "undefined": "^0.1.0"
   },
   "eslintConfig": {
     "extends": "react-app"

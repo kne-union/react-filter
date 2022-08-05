@@ -1,5 +1,6 @@
 import React, {cloneElement, useState, useMemo} from "react";
 import {Button, Col, Divider, Row, Space, Tag} from "antd";
+import useEvent from '@kne/use-event';
 import {Provider} from "./context";
 import FilterItem from "./FilterItem";
 import City from "./City";
@@ -58,6 +59,7 @@ const Filter = ({
     const value = useMemo(() => {
         return filterNull(originValue);
     }, [originValue]);
+    const emitter = useEvent();
     const [display, setDisplay] = useState(defaultDisplay);
     const basicList = list.slice(0, displayLine), moreList = list.slice(displayLine);
     const renderList = (list) => list.map((item, index) => {
@@ -69,7 +71,9 @@ const Filter = ({
     });
     const changeHandler = (name, item) => {
         const target = Object.assign({}, value, {[name]: item});
-        onChange(filterNull(target));
+        const output = filterNull(target);
+        emitter.emit('change', output);
+        onChange(output);
     };
 
     const moreFilter = more && more.length > 0 ? <Space className="react-filter-line is-more">
@@ -86,7 +90,7 @@ const Filter = ({
     </Space> : null;
 
     return <Provider value={{
-        value, onChange: changeHandler
+        value, onChange: changeHandler, emitter
     }}>
         <div className="react-filter">
             <div className="react-filter-inner">

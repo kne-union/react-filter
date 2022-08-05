@@ -3,7 +3,7 @@ import {Button, Space} from "antd";
 import {useConsumer} from "../context";
 import useClickOutSide from "@kne/use-click-outside";
 import classnames from "classnames";
-import {get,isFunction} from "lodash";
+import {get, isFunction} from "lodash";
 
 const SearchButton = ({
                           name,
@@ -21,13 +21,20 @@ const SearchButton = ({
                       }) => {
     const {value: aValue, onChange} = useConsumer();
     const currentValue = aValue[name];
-    const [value, setValue] = useState(defaultValue || get(currentValue, "value"));
+    const initCurrentValue = get(currentValue, "value");
+    const [value, setValue] = useState(defaultValue || initCurrentValue);
+
     const [active, setActive] = useState(defaultActive);
     const withTemplate = (value = '') => ({
         value, label: isFunction(template) ? template(value) : value.toString()
     });
+
+    useEffect(() => {
+        setValue(initCurrentValue);
+    }, [initCurrentValue]);
+
     const ref = useClickOutSide(() => {
-        setValue(get(currentValue, "value"));
+        setValue(initCurrentValue);
         setActive(false);
         onBlur && onBlur();
     });
@@ -43,7 +50,7 @@ const SearchButton = ({
     })} ref={ref} onMouseEnter={() => {
         !active && setActive(true);
     }} onMouseLeave={() => {
-        active && setActive(false);
+        active && initCurrentValue === value && setActive(false);
     }}>
         <Space className="inner" size={0}>
             <div>{children({value, setValue, setActive})}</div>

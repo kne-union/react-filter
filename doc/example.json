@@ -21,11 +21,7 @@
           "name": "_",
           "packageName": "lodash"
         }
-      ],
-      "__scope_notes": {
-        "name": "这里填写包导出名称(这是一个注释字段，需要添加到[scope]中)",
-        "packageName": "这里填写包名(这是一个注释字段，需要添加到[scope]中)"
-      }
+      ]
     },
     {
       "title": "简单示例",
@@ -42,6 +38,44 @@
         {
           "name": "space",
           "packageName": "antd/lib/space"
+        }
+      ]
+    },
+    {
+      "title": "扩展示例",
+      "description": "展示扩展筛选项，自定义筛选项",
+      "code": "./extend.js",
+      "scope": [
+        {
+          "name": "reactFilter",
+          "packageName": "@kne/react-filter"
+        },
+        {
+          "name": "modal",
+          "packageName": "antd/lib/modal"
+        },
+        {
+          "name": "input",
+          "packageName": "antd/lib/input"
+        },
+        {
+          "name": "space",
+          "packageName": "antd/lib/space"
+        },
+        {
+          "name": "datePicker",
+          "packageName": "antd/lib/date-picker"
+        },
+        {
+          "name": "monment",
+          "packageName": "moment"
+        },
+        {
+          "name": "_",
+          "packageName": "lodash"
+        },
+        {
+          "packageName": "@kne/react-filter/dist/index.css"
         }
       ]
     }
