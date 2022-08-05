@@ -44,6 +44,13 @@ DateTime(时间选择),DateTime.Time DateTime.Range DateTime.Week DateTime.Month
 |   template    | 将一组数据范围显示成一段用户可阅读的问题的模版，参数为筛选项的值,要求返回一个描述的字符串                | function | -   |
 |placeholder| 当为字符串时前后两个输入框显示同样内容，当为一个数组时，第一个输入框显示数组的第一个值，第二个输入框显示为数组的第二个值 | string&#124;array                                | -        |
 
+#### Range
+
+| 属性名   | 说明                       | 类型     | 默认值 |
+|-------|--------------------------|--------|-----|
+|startProps| 该参数会结构以后传给第一个InputNumber | object |-|
+|endProps| 该参数会结构以后传给第二个InputNumber | object |-|
+
 #### List
 
 | 属性名      | 说明                      | 类型        | 默认值 |
@@ -56,5 +63,21 @@ DateTime(时间选择),DateTime.Time DateTime.Range DateTime.Week DateTime.Month
 |-------|--------|--------|-----|
 | value | 筛选项的值  | -      | -   |
 | label | 筛选项显示项 | string | -   |
+
+#### SearchButton
+
+用于自行封装过滤选项时的工具组件。Text,Text.Number，Range使用该组件实现。该组件可以让筛选项有一个包裹层在鼠标经过时显示，同时有一个确定按钮，在确定按钮点击时筛选项的结果会提交到Filter。
+
+| 属性名   | 说明                                                                        | 类型      | 默认值   |
+|-------|---------------------------------------------------------------------------|---------|-------|
+| defaultActive | 默认是否激活活跃状态                                                                | boolean | false |
+|defaultValue| 默认值通常不需要传，会取筛选器的对应项的值                                                     |-|-|
+|buttonText| 确认按钮的文案                                                                   | string  | 确定    |
+|template| 格式化结果函数                                                                   |function|-|
+|children| 是一个函数，需要传一个render函数返回内层的输入组件，会接收到children({value, setValue, setActive})参数 |function|-|
+|onBlur| 会模拟一个失去焦点的事件，点击该组件区域外的地方会触发并执行该函数                                         |function|-|
+|onSearch| 点击确认按钮时触发函数                                                               |function|-|
+|onBeforeSearch| 点击确认按钮会先触发该函数如果该函数显示返回false值则不会再触发onSearch函数，用于再筛选项的值提交给筛选器之前的数据验证|function|-|
+|onActiveChange|激活状态改变时触发函数|function|-|
 
 其他参数参考对应内部组件的参数

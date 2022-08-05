@@ -6,7 +6,6 @@ import {get, isNumber} from "lodash";
 
 export const RangeInner = ({
                                name,
-                               size,
                                isMore,
                                defaultActive,
                                template,
@@ -33,7 +32,7 @@ export const RangeInner = ({
         }
         return true;
     };
-    return <SearchButton size={size} template={template} isMore={isMore} onBlur={onBlur} defaultActive={defaultActive}
+    return <SearchButton template={template} isMore={isMore} onBlur={onBlur} defaultActive={defaultActive}
                          name={name}
                          onSearch={onSearch}
                          onBeforeSearch={(value) => {

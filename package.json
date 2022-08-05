@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "筛选器",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -73,8 +73,8 @@
     "react-scripts": "^5.0.0"
   },
   "dependencies": {
-    "@kne/use-click-outside": "^0.2.0",
     "@kne/use-event": "^0.1.2",
+    "@kne/use-simulation-blur": "^0.1.1",
     "classnames": "^2.3.1",
     "lodash": "^4.17.21"
   }

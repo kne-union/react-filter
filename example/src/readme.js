@@ -1,13 +1,13 @@
-import * as component_1 from '@kne/react-filter';
+import * as component_23 from '@kne/react-filter';
 import '@kne/react-filter/dist/index.css';
-import * as component_3 from 'antd/lib/message';
-import * as component_4 from 'lodash';
+import * as component_25 from 'antd/lib/message';
+import * as component_26 from 'lodash';
 import '@kne/react-filter/dist/index.css';
-import * as component_6 from 'antd/lib/space';
-import * as component_7 from 'antd/lib/modal';
-import * as component_8 from 'antd/lib/input';
-import * as component_9 from 'antd/lib/date-picker';
-import * as component_10 from 'moment';
+import * as component_28 from 'antd/lib/space';
+import * as component_29 from 'antd/lib/modal';
+import * as component_30 from 'antd/lib/input';
+import * as component_31 from 'antd/lib/date-picker';
+import * as component_32 from 'moment';
 import '@kne/react-filter/dist/index.css';
 const readmeConfig = {
     name: `@kne/react-filter`,
@@ -202,6 +202,31 @@ CheckboxList（多选列表）</p>
 </tr>
 </tbody>
 </table>
+<h4>Range</h4>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>说明</th>
+<th>类型</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>startProps</td>
+<td>该参数会结构以后传给第一个InputNumber</td>
+<td>object</td>
+<td>-</td>
+</tr>
+<tr>
+<td>endProps</td>
+<td>该参数会结构以后传给第二个InputNumber</td>
+<td>object</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
 <h4>List</h4>
 <table>
 <thead>
@@ -242,6 +267,74 @@ CheckboxList（多选列表）</p>
 <td>label</td>
 <td>筛选项显示项</td>
 <td>string</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h4>SearchButton</h4>
+<p>用于自行封装过滤选项时的工具组件。Text,Text.Number，Range使用该组件实现。该组件可以让筛选项有一个包裹层在鼠标经过时显示，同时有一个确定按钮，在确定按钮点击时筛选项的结果会提交到Filter。</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>说明</th>
+<th>类型</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>defaultActive</td>
+<td>默认是否激活活跃状态</td>
+<td>boolean</td>
+<td>false</td>
+</tr>
+<tr>
+<td>defaultValue</td>
+<td>默认值通常不需要传，会取筛选器的对应项的值</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>buttonText</td>
+<td>确认按钮的文案</td>
+<td>string</td>
+<td>确定</td>
+</tr>
+<tr>
+<td>template</td>
+<td>格式化结果函数</td>
+<td>function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>children</td>
+<td>是一个函数，需要传一个render函数返回内层的输入组件，会接收到children({value, setValue, setActive})参数</td>
+<td>function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>onBlur</td>
+<td>会模拟一个失去焦点的事件，点击该组件区域外的地方会触发并执行该函数</td>
+<td>function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>onSearch</td>
+<td>点击确认按钮时触发函数</td>
+<td>function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>onBeforeSearch</td>
+<td>点击确认按钮会先触发该函数如果该函数显示返回false值则不会再触发onSearch函数，用于再筛选项的值提交给筛选器之前的数据验证</td>
+<td>function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>onActiveChange</td>
+<td>激活状态改变时触发函数</td>
+<td>function</td>
 <td>-</td>
 </tr>
 </tbody>
@@ -343,7 +436,7 @@ render(<BaseExample/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_1
+    component: component_23
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",
@@ -351,11 +444,11 @@ render(<BaseExample/>);
 },{
     name: "message",
     packageName: "antd/lib/message",
-    component: component_3
+    component: component_25
 },{
     name: "_",
     packageName: "lodash",
-    component: component_4
+    component: component_26
 }]
 },{
     title: `简单示例`,
@@ -433,7 +526,7 @@ render(<Example/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_1
+    component: component_23
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",
@@ -441,7 +534,7 @@ render(<Example/>);
 },{
     name: "space",
     packageName: "antd/lib/space",
-    component: component_6
+    component: component_28
 }]
 },{
     title: `扩展示例`,
@@ -544,31 +637,31 @@ render(<Example/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_1
+    component: component_23
 },{
     name: "modal",
     packageName: "antd/lib/modal",
-    component: component_7
+    component: component_29
 },{
     name: "input",
     packageName: "antd/lib/input",
-    component: component_8
+    component: component_30
 },{
     name: "space",
     packageName: "antd/lib/space",
-    component: component_6
+    component: component_28
 },{
     name: "datePicker",
     packageName: "antd/lib/date-picker",
-    component: component_9
+    component: component_31
 },{
     name: "monment",
     packageName: "moment",
-    component: component_10
+    component: component_32
 },{
     name: "_",
     packageName: "lodash",
-    component: component_4
+    component: component_26
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",

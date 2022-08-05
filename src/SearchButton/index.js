@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useRef} from "react";
 import {Button, Space} from "antd";
 import {useConsumer} from "../context";
-import useClickOutSide from "@kne/use-click-outside";
+import useSimulationBlur from "@kne/use-simulation-blur";
 import classnames from "classnames";
 import {get, isFunction} from "lodash";
 
 const SearchButton = ({
                           name,
-                          size,
                           isMore,
                           template,
                           children,
@@ -33,7 +32,7 @@ const SearchButton = ({
         setValue(initCurrentValue);
     }, [initCurrentValue]);
 
-    const ref = useClickOutSide(() => {
+    const ref = useSimulationBlur(() => {
         setValue(initCurrentValue);
         setActive(false);
         onBlur && onBlur();
@@ -62,7 +61,7 @@ const SearchButton = ({
                     if (onBeforeSearch && onBeforeSearch(value) === false) {
                         return;
                     }
-                    onChange(name, Number.isInteger(size) && size > 1 ? [withTemplate(value)] : withTemplate(value));
+                    onChange(name, withTemplate(value));
                     setActive(false);
                     onSearch && onSearch({value});
                 }}>{buttonText}</Button> : null}</Space>
