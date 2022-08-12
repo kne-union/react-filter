@@ -1,13 +1,13 @@
-import * as component_23 from '@kne/react-filter';
+import * as component_67 from '@kne/react-filter';
 import '@kne/react-filter/dist/index.css';
-import * as component_25 from 'antd/lib/message';
-import * as component_26 from 'lodash';
+import * as component_69 from 'antd/lib/message';
+import * as component_70 from 'lodash';
 import '@kne/react-filter/dist/index.css';
-import * as component_28 from 'antd/lib/space';
-import * as component_29 from 'antd/lib/modal';
-import * as component_30 from 'antd/lib/input';
-import * as component_31 from 'antd/lib/date-picker';
-import * as component_32 from 'moment';
+import * as component_72 from 'antd/lib/space';
+import * as component_73 from 'antd/lib/modal';
+import * as component_74 from 'antd/lib/input';
+import * as component_75 from 'antd/lib/date-picker';
+import * as component_76 from 'moment';
 import '@kne/react-filter/dist/index.css';
 const readmeConfig = {
     name: `@kne/react-filter`,
@@ -240,8 +240,20 @@ CheckboxList（多选列表）</p>
 <tbody>
 <tr>
 <td>children</td>
-<td>筛选项的每一项的值，必须为 List.Item</td>
-<td>List.Item</td>
+<td>筛选项的每一项的值，必须为 List.Item，也可以为一个render function可以接收到参数render({value,onChange})</td>
+<td>List.Item|function</td>
+<td>-</td>
+</tr>
+<tr>
+<td>size</td>
+<td>最大可以选中数量，等于1的时候为单选，操作逻辑和多选略有不同</td>
+<td>number</td>
+<td>2</td>
+</tr>
+<tr>
+<td>options</td>
+<td>筛选项，为一个数组，每一项的值为{label,value}该属性有值优先取该值忽略children</td>
+<td>array</td>
 <td>-</td>
 </tr>
 </tbody>
@@ -378,7 +390,7 @@ const BaseExample = () => {
                   }]}/>,
         <DateTime label="测试字段5" name="test5" showTime/>,
         <DateTime.Range label="测试字段6" name="test6"/>
-    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={1}>
+    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={2}>
         <List.Item value="0" label="初中"/>
         <List.Item value="1" label="高中"/>
         <List.Item value="2" label="大学专科"/>
@@ -436,7 +448,7 @@ render(<BaseExample/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_23
+    component: component_67
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",
@@ -444,11 +456,11 @@ render(<BaseExample/>);
 },{
     name: "message",
     packageName: "antd/lib/message",
-    component: component_25
+    component: component_69
 },{
     name: "_",
     packageName: "lodash",
-    component: component_26
+    component: component_70
 }]
 },{
     title: `简单示例`,
@@ -526,7 +538,7 @@ render(<Example/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_23
+    component: component_67
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",
@@ -534,7 +546,7 @@ render(<Example/>);
 },{
     name: "space",
     packageName: "antd/lib/space",
-    component: component_28
+    component: component_72
 }]
 },{
     title: `扩展示例`,
@@ -637,31 +649,31 @@ render(<Example/>);
     scope: [{
     name: "reactFilter",
     packageName: "@kne/react-filter",
-    component: component_23
+    component: component_67
 },{
     name: "modal",
     packageName: "antd/lib/modal",
-    component: component_29
+    component: component_73
 },{
     name: "input",
     packageName: "antd/lib/input",
-    component: component_30
+    component: component_74
 },{
     name: "space",
     packageName: "antd/lib/space",
-    component: component_28
+    component: component_72
 },{
     name: "datePicker",
     packageName: "antd/lib/date-picker",
-    component: component_31
+    component: component_75
 },{
     name: "monment",
     packageName: "moment",
-    component: component_32
+    component: component_76
 },{
     name: "_",
     packageName: "lodash",
-    component: component_26
+    component: component_70
 },{
     name: "",
     packageName: "@kne/react-filter/dist/index.css",

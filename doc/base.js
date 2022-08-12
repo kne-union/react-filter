@@ -29,7 +29,7 @@ const BaseExample = () => {
                   }]}/>,
         <DateTime label="测试字段5" name="test5" showTime/>,
         <DateTime.Range label="测试字段6" name="test6"/>
-    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={1}>
+    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={2}>
         <List.Item value="0" label="初中"/>
         <List.Item value="1" label="高中"/>
         <List.Item value="2" label="大学专科"/>

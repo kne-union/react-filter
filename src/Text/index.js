@@ -25,7 +25,7 @@ const withValue = (WrappedComponent, options = {}) => ({
         {({value, setValue, setActive}) => <>
             <WrappedComponent size="small" {...props} placeholder={placeholder || label} value={value}
                               onChange={(e) => {
-                                  setValue(options.getValue ? options.getValue(e) : e.target.value);
+                                  setValue(options.getValue ? options.getValue(e) : e.target.value.trim());
                               }} onFocus={() => {
                 setActive(true);
             }}/>

@@ -2,7 +2,7 @@ import React, {createContext, useContext} from "react";
 import {Button, message, Tag} from "antd";
 import {useConsumer} from "../context";
 import FilterItem from "../FilterItem";
-import {get, isFunction, isEqual} from "lodash";
+import {get, isFunction, isEqual, findIndex} from "lodash";
 
 const {CheckableTag} = Tag;
 
@@ -44,7 +44,7 @@ const List = ({label, labelHidden, name, size, children, options, more, isMore})
             changeHandler(newList);
         } else {
             const newList = currentValue.slice(0);
-            newList.splice(currentValue.indexOf(value), 1);
+            newList.splice(findIndex(currentValue, (item) => item.value === value.value), 1);
             changeHandler(newList);
         }
     };

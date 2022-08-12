@@ -63,7 +63,7 @@ const BaseExample = () => {
                   }]}/>,
         <DateTime label="测试字段5" name="test5" showTime/>,
         <DateTime.Range label="测试字段6" name="test6"/>
-    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={1}>
+    ]} list={[[<City label="目前城市" name="currentCity" size={5}/>], [<List label="学历" name="degree" size={2}>
         <List.Item value="0" label="初中"/>
         <List.Item value="1" label="高中"/>
         <List.Item value="2" label="大学专科"/>
@@ -354,9 +354,11 @@ DateTime(时间选择),DateTime.Time DateTime.Range DateTime.Week DateTime.Month
 
 #### List
 
-| 属性名      | 说明                      | 类型        | 默认值 |
-|----------|-------------------------|-----------|-----|
-| children | 筛选项的每一项的值，必须为 List.Item | List.Item | -   |
+| 属性名      | 说明                                                                           | 类型                      | 默认值 |
+|----------|------------------------------------------------------------------------------|-------------------------|-----|
+| children | 筛选项的每一项的值，必须为 List.Item，也可以为一个render function可以接收到参数render({value,onChange}) | List.Item&#124;function | -   |
+| size     | 最大可以选中数量，等于1的时候为单选，操作逻辑和多选略有不同                                               | number                  |2|
+| options| 筛选项，为一个数组，每一项的值为{label,value}该属性有值优先取该值忽略children                            | array                   |-|
 
 #### List.Item
 
