@@ -1,0 +1,962 @@
+# react-filter
+
+### 描述
+
+A React filter component library
+
+### 安装
+
+```shell
+npm i --save @kne/react-filter
+```
+
+### 概述
+
+### React Filter
+
+一个功能强大的 React 筛选组件库，支持多种筛选字段类型和灵活的布局方式。
+
+### 主要特性
+
+- **多种筛选字段类型**：支持输入框、数字区间、日期选择、日期范围等常用筛选类型
+- **灵活布局**：支持普通筛选（横向布局）和高级筛选（垂直布局）两种模式
+- **展开收起**：筛选行支持展开收起功能，优化页面空间利用
+- **已选值展示**：自动展示已选筛选条件，支持单独删除和清空全部
+- **弹出层交互**：支持弹出层形式的筛选交互，确认后才生效
+- **国际化支持**：内置中英文语言包，支持多语言切换
+- **高阶组件**：提供 `withFilterValue` 和 `withFieldItem` 高阶组件，便于扩展自定义字段
+
+### 适用场景
+
+- 数据列表页面的筛选功能
+- 复杂表单的筛选条件配置
+- 多条件组合查询场景
+- 需要展示已选筛选条件的场景
+
+### 快速开始
+
+```javascript
+import Filter, { fields } from '@kne/react-filter';
+import '@kne/react-filter/dist/index.css';
+
+const { InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem } = fields;
+
+function MyComponent() {
+  const [filterValue, setFilterValue] = useState([]);
+
+  const handleSearch = () => {
+    const params = Filter.getFilterValue(filterValue);
+    console.log('筛选参数:', params);
+  };
+
+  return (
+    <Filter
+      value={filterValue}
+      onChange={setFilterValue}
+      list={[
+        [
+          { type: InputFilterItem, props: { name: 'keyword', label: '关键词' } },
+          { type: NumberRangeFilterItem, props: { name: 'amount', label: '金额' } }
+        ],
+        [
+          { type: DatePickerFilterItem, props: { name: 'date', label: '日期' } }
+        ]
+      ]}
+      displayLine={1}
+      extra={<Button type="primary" onClick={handleSearch}>搜索</Button>}
+    />
+  );
+}
+```
+
+### 核心组件
+
+| 组件 | 说明 |
+|------|------|
+| `Filter` | 主筛选组件，横向布局，支持展开收起 |
+| `AdvancedFilter` | 高级筛选组件，垂直布局 |
+| `FilterValueDisplay` | 已选值展示组件 |
+| `PopoverItem` | 弹出层筛选项组件 |
+| `FilterItem` | 筛选项容器组件 |
+| `FilterLines` | 筛选行组件 |
+| `FilterProvider` | 状态管理组件 |
+
+### 筛选字段
+
+| 字段组件 | 说明 |
+|----------|------|
+| `InputFilterItem` | 输入框筛选 |
+| `NumberRangeFilterItem` | 数字区间筛选 |
+| `DatePickerFilterItem` | 日期选择筛选 |
+| `DateRangePickerFilterItem` | 日期范围筛选 |
+
+### 依赖
+
+- React >= 16.8
+- antd >= 5.0.0
+- dayjs
+- lodash
+
+
+### 示例
+
+#### 示例代码
+
+- 基础用法
+- 展示 Filter 组件的基础用法，包含多种筛选字段类型
+- _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
+
+```jsx
+const { default: Filter, fields } = _ReactFilter;
+const { InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem, DateRangePickerFilterItem } = fields;
+const { Flex, Button, message } = antd;
+const { useState } = React;
+
+const BaseExample = () => {
+  const [filterValue, setFilterValue] = useState([]);
+
+  const handleSearch = () => {
+    const params = Filter.getFilterValue(filterValue);
+    message.info(&#96;搜索参数: ${JSON.stringify(params, null, 2)}&#96;);
+    console.log('筛选参数:', params);
+  };
+
+  return (
+    <Flex vertical gap={16}>
+      <Filter
+        value={filterValue}
+        onChange={setFilterValue}
+        list={[
+          [
+            {
+              type: InputFilterItem,
+              props: {
+                name: 'keyword',
+                label: '关键词',
+                placeholder: '请输入关键词搜索'
+              }
+            },
+            {
+              type: NumberRangeFilterItem,
+              props: {
+                name: 'amount',
+                label: '金额',
+                unit: '元',
+                min: 0,
+                max: 999999
+              }
+            },
+            {
+              type: DatePickerFilterItem,
+              props: {
+                name: 'createTime',
+                label: '创建时间',
+                format: 'YYYY-MM-DD'
+              }
+            }
+          ],
+          [
+            {
+              type: DateRangePickerFilterItem,
+              props: {
+                name: 'dateRange',
+                label: '日期范围',
+                format: 'YYYY-MM-DD'
+              }
+            }
+          ]
+        ]}
+        displayLine={1}
+        extra={
+          <Button type="primary" onClick={handleSearch}>
+            搜索
+          </Button>
+        }
+      />
+      <Flex gap={8}>
+        <span>当前筛选值:</span>
+        <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4, flex: 1 }}>{JSON.stringify(filterValue, null, 2)}</pre>
+      </Flex>
+    </Flex>
+  );
+};
+
+render(<BaseExample />);
+
+```
+
+- 高级筛选
+- 使用 AdvancedFilter 组件实现更复杂的筛选布局
+- _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
+
+```jsx
+const { AdvancedFilter } = _ReactFilter;
+const { InputFilterItem, ListFilterItem } = AdvancedFilter.fields;
+const { Flex, Button, message } = antd;
+const { useState } = React;
+
+const AdvancedFilterExample = () => {
+  const [filterValue, setFilterValue] = useState([]);
+
+  const handleSearch = () => {
+    const params = {};
+    filterValue.forEach(item => {
+      params[item.name] = Array.isArray(item.value)
+        ? item.value.map(v => v.value)
+        : item.value?.value;
+    });
+    message.info(&#96;搜索参数: ${JSON.stringify(params, null, 2)}&#96;);
+    console.log('筛选参数:', params);
+  };
+
+  return (
+    <Flex vertical gap={16}>
+      <AdvancedFilter
+        value={filterValue}
+        onChange={setFilterValue}
+        list={[
+          [
+            {
+              type: InputFilterItem,
+              props: {
+                name: 'name',
+                label: '姓名'
+              }
+            },
+            {
+              type: InputFilterItem,
+              props: {
+                name: 'phone',
+                label: '手机号'
+              }
+            }
+          ],
+          [
+            {
+              type: ListFilterItem,
+              props: {
+                name: 'status',
+                label: '状态',
+                single: true,
+                items: [
+                  { label: '待处理', value: 'pending' },
+                  { label: '处理中', value: 'processing' },
+                  { label: '已完成', value: 'completed' },
+                  { label: '已取消', value: 'cancelled' }
+                ]
+              }
+            }
+          ],
+          [
+            {
+              type: ListFilterItem,
+              props: {
+                name: 'tags',
+                label: '标签',
+                single: false,
+                maxLength: 3,
+                items: [
+                  { label: '前端', value: 'frontend' },
+                  { label: '后端', value: 'backend' },
+                  { label: '全栈', value: 'fullstack' },
+                  { label: 'UI设计', value: 'ui' },
+                  { label: '产品', value: 'product' }
+                ]
+              }
+            }
+          ]
+        ]}
+      />
+      <Flex justify="end">
+        <Button type="primary" onClick={handleSearch}>
+          查询
+        </Button>
+      </Flex>
+      <Flex gap={8}>
+        <span>当前筛选值:</span>
+        <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4, flex: 1 }}>
+          {JSON.stringify(filterValue, null, 2)}
+        </pre>
+      </Flex>
+    </Flex>
+  );
+};
+
+render(<AdvancedFilterExample />);
+
+```
+
+- 筛选字段
+- 展示各种筛选字段组件的使用方法
+- _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
+
+```jsx
+const { fields, PopoverItem } = _ReactFilter;
+const { InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem, DateRangePickerFilterItem, TypeDateRangePickerFilterItem } = fields;
+const { Input, InputNumber, Space, Flex, Select } = antd;
+const { useState } = React;
+
+// 自定义下拉选择筛选项
+const SelectFilterItem = ({ label, value, onChange, options = [] }) => {
+  return (
+    <PopoverItem
+      label={label}
+      value={value}
+      onChange={onChange}
+    >
+      {({ value, onChange }) => (
+        <Select
+          style={{ width: 200 }}
+          placeholder={&#96;请选择${label}&#96;}
+          value={value?.value}
+          onChange={(val, option) => {
+            onChange({
+              value: val,
+              label: option?.label || val
+            });
+          }}
+          options={options}
+        />
+      )}
+    </PopoverItem>
+  );
+};
+
+const FilterFieldsExample = () => {
+  const [values, setValues] = useState({});
+
+  const fieldConfigs = [
+    {
+      name: 'input',
+      label: '输入筛选',
+      component: InputFilterItem,
+      props: {}
+    },
+    {
+      name: 'numberRange',
+      label: '数字区间',
+      component: NumberRangeFilterItem,
+      props: { unit: '万', min: 0 }
+    },
+    {
+      name: 'date',
+      label: '日期选择',
+      component: DatePickerFilterItem,
+      props: { picker: 'date' }
+    },
+    {
+      name: 'month',
+      label: '月份选择',
+      component: DatePickerFilterItem,
+      props: { picker: 'month' }
+    },
+    {
+      name: 'dateRange',
+      label: '日期范围',
+      component: DateRangePickerFilterItem,
+      props: {}
+    },
+    {
+      name: 'typeDateRange',
+      label: '类型日期范围',
+      component: TypeDateRangePickerFilterItem,
+      props: {}
+    },
+    {
+      name: 'select',
+      label: '下拉选择',
+      component: SelectFilterItem,
+      props: {
+        options: [
+          { value: 'pending', label: '待处理' },
+          { value: 'processing', label: '处理中' },
+          { value: 'completed', label: '已完成' },
+          { value: 'cancelled', label: '已取消' }
+        ]
+      }
+    }
+  ];
+
+  return (
+    <Flex vertical gap={24}>
+      <h4>筛选字段组件展示</h4>
+      <Flex wrap gap={16}>
+        {fieldConfigs.map(({ name, label, component: Component, props }) => (
+          <Component
+            key={name}
+            label={label}
+            value={values[name]}
+            onChange={(val) => setValues(prev => ({ ...prev, [name]: val }))}
+            {...props}
+          />
+        ))}
+      </Flex>
+      <Flex gap={8}>
+        <span>当前值:</span>
+        <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4, flex: 1 }}>
+          {JSON.stringify(values, null, 2)}
+        </pre>
+      </Flex>
+    </Flex>
+  );
+};
+
+render(<FilterFieldsExample />);
+
+```
+
+- 已选值展示
+- FilterValueDisplay 组件用于展示已选择的筛选条件
+- _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
+
+```jsx
+const { FilterValueDisplay } = _ReactFilter;
+const { Flex } = antd;
+const { useState } = React;
+
+const FilterValueDisplayExample = () => {
+  const [filterValue, setFilterValue] = useState([
+    { name: 'keyword', label: '关键词', value: { label: 'React', value: 'React' } },
+    { name: 'status', label: '状态', value: { label: '已完成', value: 'completed' } },
+    { name: 'amount', label: '金额', value: { label: '100-500万', value: [100, 500] } },
+    {
+      name: 'tags',
+      label: '标签',
+      value: [
+        { label: '前端', value: 'frontend' },
+        { label: 'React', value: 'react' }
+      ]
+    }
+  ]);
+
+  return (
+    <Flex vertical gap={16}>
+      <h4>已选筛选条件展示</h4>
+      <FilterValueDisplay
+        value={filterValue}
+        onChange={setFilterValue}
+        extraExpand={
+          <span style={{ fontSize: 12, color: '#999' }}>
+            共 {filterValue.length} 项
+          </span>
+        }
+      />
+      <Flex gap={8}>
+        <span>当前值:</span>
+        <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4, flex: 1 }}>
+          {JSON.stringify(filterValue, null, 2)}
+        </pre>
+      </Flex>
+    </Flex>
+  );
+};
+
+render(<FilterValueDisplayExample />);
+
+```
+
+- 弹出层筛选
+- 使用 PopoverItem 实现弹出层形式的筛选项
+- _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
+
+```jsx
+const { PopoverItem } = _ReactFilter;
+const { Input, InputNumber, Space, Select, Radio, Flex } = antd;
+const { useState } = React;
+
+const PopoverItemExample = () => {
+  const [inputValue, setInputValue] = useState(null);
+  const [numberValue, setNumberValue] = useState(null);
+  const [selectValue, setSelectValue] = useState(null);
+  const [rangeValue, setRangeValue] = useState(null);
+
+  return (
+    <Flex vertical gap={24}>
+      <h4>弹出层筛选组件示例</h4>
+      <Flex wrap gap={16}>
+        {/* 输入框筛选 */}
+        <PopoverItem
+          label="文本输入"
+          value={inputValue}
+          onChange={setInputValue}
+        >
+          {({ value, onChange }) => (
+            <Input
+              style={{ width: 240 }}
+              placeholder="请输入文本"
+              value={value?.value || ''}
+              onChange={(e) => onChange(
+                e.target.value ? { label: e.target.value, value: e.target.value } : null
+              )}
+            />
+          )}
+        </PopoverItem>
+
+        {/* 数字输入筛选 */}
+        <PopoverItem
+          label="数字输入"
+          value={numberValue}
+          onChange={setNumberValue}
+          onValidate={(val) => val?.value !== undefined}
+        >
+          {({ value, onChange }) => (
+            <InputNumber
+              style={{ width: 240 }}
+              placeholder="请输入数字"
+              value={value?.value}
+              onChange={(val) => onChange(
+                val !== null ? { label: String(val), value: val } : null
+              )}
+            />
+          )}
+        </PopoverItem>
+
+        {/* 下拉选择筛选 */}
+        <PopoverItem
+          label="状态选择"
+          value={selectValue}
+          onChange={setSelectValue}
+        >
+          {({ value, onChange }) => (
+            <Select
+              style={{ width: 240 }}
+              placeholder="请选择状态"
+              value={value?.value}
+              onChange={(val, option) => onChange({
+                value: val,
+                label: option?.label || val
+              })}
+              options={[
+                { value: 'active', label: '激活' },
+                { value: 'inactive', label: '未激活' },
+                { value: 'pending', label: '待处理' }
+              ]}
+            />
+          )}
+        </PopoverItem>
+
+        {/* 数字范围筛选 */}
+        <PopoverItem
+          label="数值范围"
+          value={rangeValue}
+          onChange={setRangeValue}
+          onValidate={(val) => {
+            const range = val?.value;
+            return !(range && range[0] !== undefined && range[1] !== undefined && range[1] < range[0]);
+          }}
+        >
+          {({ value, onChange }) => (
+            <Space.Compact>
+              <InputNumber
+                style={{ width: 100 }}
+                placeholder="最小值"
+                value={value?.value?.[0]}
+                onChange={(val) => onChange({
+                  label: &#96;${val || '?'}-${value?.value?.[1] || '?'}&#96;,
+                  value: [val, value?.value?.[1]]
+                })}
+              />
+              <Input
+                style={{ width: 30, textAlign: 'center', borderLeft: 0, borderRight: 0 }}
+                placeholder="~"
+                disabled
+              />
+              <InputNumber
+                style={{ width: 100 }}
+                placeholder="最大值"
+                value={value?.value?.[1]}
+                onChange={(val) => onChange({
+                  label: &#96;${value?.value?.[0] || '?'}-${val || '?'}&#96;,
+                  value: [value?.value?.[0], val]
+                })}
+              />
+            </Space.Compact>
+          )}
+        </PopoverItem>
+      </Flex>
+
+      <Flex vertical gap={8}>
+        <h5>当前值:</h5>
+        <pre style={{ margin: 0, background: '#f5f5f5', padding: 12, borderRadius: 4 }}>
+          {JSON.stringify({
+            文本输入: inputValue,
+            数字输入: numberValue,
+            状态选择: selectValue,
+            数值范围: rangeValue
+          }, null, 2)}
+        </pre>
+      </Flex>
+    </Flex>
+  );
+};
+
+render(<PopoverItemExample />);
+
+```
+
+### API
+
+### Filter 主组件
+
+筛选组件，用于展示筛选项和处理筛选条件。
+
+#### 属性
+
+| 属性           | 类型                                                   | 默认值    | 说明              |
+|--------------|------------------------------------------------------|--------|-----------------|
+| value        | `Array<{ name: string, label: string, value: any }>` | -      | 筛选值数组           |
+| defaultValue | `Array<{ name: string, label: string, value: any }>` | `[]`   | 默认筛选值           |
+| onChange     | `(value: Array) => void`                             | -      | 筛选值变化回调         |
+| list         | `Array<Array>`                                       | `[]`   | 筛选项配置数组，支持多行    |
+| displayLine  | `number`                                             | `1`    | 默认展示的行数，超出部分折叠  |
+| label        | `string`                                             | `'筛选'` | 筛选区域标题          |
+| extra        | `ReactNode`                                          | -      | 额外操作区域，通常放置搜索按钮 |
+| extraExpand  | `ReactNode`                                          | -      | 已选区域额外内容        |
+| className    | `string`                                             | -      | 自定义类名           |
+
+#### 静态方法
+
+| 方法                                   | 说明                                         |
+|--------------------------------------|--------------------------------------------|
+| `Filter.getFilterValue(filterValue)` | 将筛选值数组转换为参数对象，如 `{ name: value }`          |
+| `Filter.useFilter()`                 | 获取 Filter Context，返回 `{ value, onChange }` |
+
+#### 使用示例
+
+```javascript
+import Filter, { fields } from '@kne/react-filter';
+
+const { InputFilterItem, NumberRangeFilterItem } = fields;
+
+<Filter
+  value={filterValue}
+  onChange={setFilterValue}
+  list={[
+    [
+      { type: InputFilterItem, props: { name: 'keyword', label: '关键词' } },
+      { type: NumberRangeFilterItem, props: { name: 'amount', label: '金额' } }
+    ]
+  ]}
+  displayLine={1}
+  extra={<Button type="primary">搜索</Button>}
+/>
+```
+
+---
+
+### AdvancedFilter 高级筛选组件
+
+高级筛选组件，用于更复杂的筛选场景，采用垂直布局。
+
+#### 属性
+
+| 属性           | 类型                                                   | 默认值  | 说明       |
+|--------------|------------------------------------------------------|------|----------|
+| value        | `Array<{ name: string, label: string, value: any }>` | -    | 筛选值数组    |
+| defaultValue | `Array<{ name: string, label: string, value: any }>` | `[]` | 默认筛选值    |
+| onChange     | `(value: Array) => void`                             | -    | 筛选值变化回调  |
+| list         | `Array<Array>`                                       | `[]` | 筛选项配置数组  |
+| more         | `Array`                                              | -    | 额外折叠的筛选项 |
+| className    | `string`                                             | -    | 自定义类名    |
+
+#### 使用示例
+
+```javascript
+import { AdvancedFilter, fields } from '@kne/react-filter';
+
+<AdvancedFilter
+  value={filterValue}
+  onChange={setFilterValue}
+  list={[
+    [
+      { type: InputFilterItem, props: { name: 'name', label: '姓名' } }
+    ]
+  ]}
+/>
+```
+
+---
+
+### FilterValueDisplay 已选值展示
+
+展示已选择的筛选条件，支持单独删除和清空全部。
+
+#### 属性
+
+| 属性          | 类型                                                   | 默认值 | 说明      |
+|-------------|------------------------------------------------------|-----|---------|
+| value       | `Array<{ name: string, label: string, value: any }>` | -   | 筛选值数组   |
+| onChange    | `(value: Array) => void`                             | -   | 筛选值变化回调 |
+| extraExpand | `ReactNode`                                          | -   | 额外展示内容  |
+
+---
+
+### PopoverItem 弹出层筛选项
+
+弹出层形式的筛选项，支持确认取消操作。
+
+#### 属性
+
+| 属性               | 类型                                          | 默认值            | 说明        |
+|------------------|---------------------------------------------|----------------|-----------|
+| label            | `string`                                    | -              | 筛选项标签     |
+| value            | `{ label: string, value: any }`             | -              | 当前值       |
+| onChange         | `(value: object) => void`                   | -              | 值变化回调     |
+| onValidate       | `(value: object) => boolean`                | -              | 确认按钮校验函数  |
+| onOpenChange     | `(open: boolean) => void`                   | -              | 弹出层状态变化回调 |
+| placement        | `string`                                    | `'bottomLeft'` | 弹出层位置     |
+| overlayClassName | `string`                                    | -              | 弹出层自定义类名  |
+| children         | `(props: { value, onChange }) => ReactNode` | -              | 内容渲染函数    |
+
+#### 使用示例
+
+```javascript
+import { PopoverItem } from '@kne/react-filter';
+
+<PopoverItem
+  label="文本输入"
+  value={inputValue}
+  onChange={setInputValue}
+>
+  {({ value, onChange }) => (
+    <Input
+      value={value?.value}
+      onChange={(e) => onChange({ label: e.target.value, value: e.target.value })}
+    />
+  )}
+</PopoverItem>
+```
+
+---
+
+### FilterItem 筛选项容器
+
+筛选项的基础容器组件。
+
+#### 属性
+
+| 属性       | 类型          | 默认值 | 说明         |
+|----------|-------------|-----|------------|
+| label    | `string`    | -   | 筛选项标签      |
+| open     | `boolean`   | -   | 是否展开状态     |
+| active   | `boolean`   | -   | 是否激活状态（有值） |
+| children | `ReactNode` | -   | 子元素        |
+
+---
+
+### FilterLines 筛选行
+
+筛选行组件，支持多行展开收起。
+
+#### 属性
+
+| 属性          | 类型             | 默认值    | 说明      |
+|-------------|----------------|--------|---------|
+| list        | `Array<Array>` | `[]`   | 筛选项配置数组 |
+| displayLine | `number`       | `1`    | 默认展示行数  |
+| label       | `string`       | `'筛选'` | 标题      |
+| extra       | `ReactNode`    | -      | 额外操作区域  |
+| className   | `string`       | -      | 自定义类名   |
+
+---
+
+### FilterProvider 状态管理
+
+Filter 状态管理组件，用于自定义 Filter 结构。
+
+#### 属性
+
+| 属性           | 类型                                    | 默认值  | 说明       |
+|--------------|---------------------------------------|------|----------|
+| value        | `Array`                               | -    | 筛选值数组    |
+| defaultValue | `Array`                               | `[]` | 默认筛选值    |
+| onChange     | `(value: Array) => void`              | -    | 筛选值变化回调  |
+| children     | `ReactNode \| (context) => ReactNode` | -    | 子元素或渲染函数 |
+
+---
+
+### 高阶组件
+
+#### withFilterValue
+
+为组件注入筛选值和变更函数。
+
+```javascript
+import { withFilterValue } from '@kne/react-filter';
+
+const MyFilterItem = withFilterValue(({ name, label, value, onChange, ...props }) => {
+  return <Component value={value} onChange={onChange}/>;
+});
+```
+
+#### withFieldItem
+
+为组件包装 FilterItem 样式。
+
+```javascript
+import { withFieldItem } from '@kne/react-filter';
+
+const MyFieldItem = withFieldItem(MyComponent);
+```
+
+---
+
+### 筛选字段组件
+
+#### InputFilterItem 输入筛选
+
+弹出层形式的输入框筛选组件。
+
+| 属性          | 类型                   | 默认值 | 说明     |
+|-------------|----------------------|-----|--------|
+| name        | `string`             | -   | 字段名称   |
+| label       | `string`             | -   | 标签     |
+| placeholder | `string`             | -   | 占位符    |
+| onValidate  | `(value) => boolean` | -   | 确认校验函数 |
+
+#### NumberRangeFilterItem 数字区间筛选
+
+数字区间输入筛选组件。
+
+| 属性          | 类型       | 默认值 | 说明   |
+|-------------|----------|-----|------|
+| name        | `string` | -   | 字段名称 |
+| label       | `string` | -   | 标签   |
+| unit        | `string` | -   | 单位   |
+| min         | `number` | -   | 最小值  |
+| max         | `number` | -   | 最大值  |
+| placeholder | `string` | -   | 占位符  |
+
+#### DatePickerFilterItem 日期筛选
+
+日期选择筛选组件。
+
+| 属性     | 类型                                                   | 默认值            | 说明    |
+|--------|------------------------------------------------------|----------------|-------|
+| name   | `string`                                             | -              | 字段名称  |
+| label  | `string`                                             | -              | 标签    |
+| picker | `'date' \| 'week' \| 'month' \| 'quarter' \| 'year'` | `'date'`       | 选择器类型 |
+| format | `string`                                             | `'YYYY-MM-DD'` | 日期格式  |
+
+#### DateRangePickerFilterItem 日期范围筛选
+
+日期范围选择筛选组件。
+
+| 属性     | 类型                                  | 默认值            | 说明   |
+|--------|-------------------------------------|----------------|------|
+| name   | `string`                            | -              | 字段名称 |
+| label  | `string`                            | -              | 标签   |
+| format | `string`                            | `'YYYY-MM-DD'` | 日期格式 |
+| header | `ReactNode \| (props) => ReactNode` | -              | 头部内容 |
+
+#### TypeDateRangePickerFilterItem 类型日期范围筛选
+
+支持按日/周/月切换的日期范围选择筛选组件。
+
+| 属性     | 类型       | 默认值            | 说明   |
+|--------|----------|----------------|------|
+| name   | `string` | -              | 字段名称 |
+| label  | `string` | -              | 标签   |
+| format | `string` | `'YYYY-MM-DD'` | 日期格式 |
+
+---
+
+### TypeDateRangePickerField 类型日期范围选择器
+
+支持按日/周/月切换的日期范围选择器基础组件。
+
+| 属性              | 类型                                                         | 默认值                             | 说明       |
+|-----------------|------------------------------------------------------------|---------------------------------|----------|
+| value           | `{ type: string, value: [Date, Date] }`                    | -                               | 当前值      |
+| defaultValue    | `{ type: string, value: [Date, Date] }`                    | `{ type: 'date', value: null }` | 默认值      |
+| onChange        | `(value: object) => void`                                  | -                               | 值变化回调    |
+| shortcuts       | `boolean`                                                  | `true`                          | 是否显示快捷选项 |
+| shortcutOptions | `Array<{ label: string, getValue: () => [Dayjs, Dayjs] }>` | -                               | 自定义快捷选项  |
+
+**value 结构：**
+
+```typescript
+interface TypeDateRangeValue {
+  type: 'date' | 'week' | 'month';  // 日期类型
+  value: [Date, Date] | null;       // 日期范围 [开始时间, 结束时间]
+}
+```
+
+**默认快捷选项：**
+
+- 近7天：`dayjs().subtract(7, 'day')` 至今天
+- 本月：本月第一天至最后一天
+- 近三个月：`dayjs().subtract(3, 'month')` 至今天
+- 当年：本年第一天至最后一天
+
+**自定义快捷选项示例：**
+
+```javascript
+import { TypeDateRangePickerField } from '@kne/react-filter';
+
+<TypeDateRangePickerField
+  shortcuts={true}
+  shortcutOptions={[
+    {
+      label: '最近一周',
+      getValue: () => [dayjs().subtract(7, 'day').startOf('day'), dayjs().endOf('day')]
+    },
+    {
+      label: '最近一月',
+      getValue: () => [dayjs().subtract(1, 'month').startOf('day'), dayjs().endOf('day')]
+    }
+  ]}
+/>
+```
+
+---
+
+### SearchInput 搜索输入
+
+搜索输入组件。
+
+| 属性          | 类型       | 默认值 | 说明   |
+|-------------|----------|-----|------|
+| name        | `string` | -   | 字段名称 |
+| label       | `string` | -   | 标签   |
+| placeholder | `string` | -   | 占位符  |
+
+---
+
+### 工具方法
+
+#### getFilterValue
+
+将筛选值数组转换为参数对象。
+
+```javascript
+import { getFilterValue } from '@kne/react-filter';
+
+const filterValue = [
+  { name: 'keyword', value: { label: 'test', value: 'test' } },
+  { name: 'status', value: [{ label: '已完成', value: 'done' }] }
+];
+
+const params = getFilterValue(filterValue);
+// { keyword: 'test', status: ['done'] }
+```
+
+---
+
+### 筛选值结构
+
+筛选值数组中的每一项结构：
+
+```typescript
+interface FilterValueItem {
+  name: string;      // 字段名称
+  label: string;     // 字段标签（用于展示）
+  value: {           // 单个值
+    label: string;   // 显示文本
+    value: any;      // 实际值
+  } | Array<{        // 或多个值
+    label: string;
+    value: any;
+  }> | null;         // 或空值
+}
+```
