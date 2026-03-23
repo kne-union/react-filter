@@ -1,5 +1,5 @@
 const { AdvancedFilter } = _ReactFilter;
-const { InputFilterItem, ListFilterItem } = AdvancedFilter.fields;
+const { InputFilterItem, ListFilterItem, CityFilterItem } = AdvancedFilter.fields;
 const { Flex, Button, message } = antd;
 const { useState } = React;
 
@@ -70,6 +70,16 @@ const AdvancedFilterExample = () => {
                   { label: 'UI设计', value: 'ui' },
                   { label: '产品', value: 'product' }
                 ]
+              }
+            }
+          ],
+          [
+            {
+              type: CityFilterItem,
+              props: {
+                name: 'city',
+                label: '城市',
+                maxLength: 3
               }
             }
           ]

@@ -466,6 +466,8 @@
 .filter-advanced-item-other {
   position: relative;
   overflow: hidden;
+  display: inline-flex;
+  align-items: center;
 }
 
 .filter-advanced-item-other-inner {

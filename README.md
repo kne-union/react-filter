@@ -103,14 +103,28 @@ function MyComponent() {
 #### 示例代码
 
 - 基础用法
-- 展示 Filter 组件的基础用法，包含多种筛选字段类型
+- 展示 Filter 组件的基础用法，包含所有筛选字段类型
 - _ReactFilter(@kne/current-lib_react-filter)[import * as _ReactFilter from "@kne/react-filter"],(@kne/current-lib_react-filter/dist/index.css),antd(antd)
 
 ```jsx
 const { default: Filter, fields } = _ReactFilter;
-const { InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem, DateRangePickerFilterItem } = fields;
+const {
+  InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem,
+  DateRangePickerFilterItem, TypeDateRangePickerFilterItem,
+  SuperSelectFilterItem, SelectFunctionFilterItem,
+  SelectIndustryFilterItem, SelectAddressFilterItem
+} = fields;
 const { Flex, Button, message } = antd;
 const { useState } = React;
+
+const departmentOptions = [
+  { value: 'tech', label: '技术研发部' },
+  { value: 'product', label: '产品设计部' },
+  { value: 'operation', label: '运营管理部' },
+  { value: 'hr', label: '人力资源部' },
+  { value: 'finance', label: '财务部' },
+  { value: 'marketing', label: '市场营销部' }
+];
 
 const BaseExample = () => {
   const [filterValue, setFilterValue] = useState([]);
@@ -130,39 +144,41 @@ const BaseExample = () => {
           [
             {
               type: InputFilterItem,
-              props: {
-                name: 'keyword',
-                label: '关键词',
-                placeholder: '请输入关键词搜索'
-              }
+              props: { name: 'keyword', label: '关键词', placeholder: '请输入关键词搜索' }
             },
             {
               type: NumberRangeFilterItem,
-              props: {
-                name: 'amount',
-                label: '金额',
-                unit: '元',
-                min: 0,
-                max: 999999
-              }
+              props: { name: 'amount', label: '金额', unit: '元', min: 0, max: 999999 }
             },
             {
               type: DatePickerFilterItem,
-              props: {
-                name: 'createTime',
-                label: '创建时间',
-                format: 'YYYY-MM-DD'
-              }
+              props: { name: 'createTime', label: '创建时间', format: 'YYYY-MM-DD' }
+            },
+            {
+              type: DateRangePickerFilterItem,
+              props: { name: 'dateRange', label: '日期范围', format: 'YYYY-MM-DD' }
+            },
+            {
+              type: TypeDateRangePickerFilterItem,
+              props: { name: 'typeDateRange', label: '快捷日期' }
             }
           ],
           [
             {
-              type: DateRangePickerFilterItem,
-              props: {
-                name: 'dateRange',
-                label: '日期范围',
-                format: 'YYYY-MM-DD'
-              }
+              type: SuperSelectFilterItem,
+              props: { name: 'department', label: '部门', options: departmentOptions }
+            },
+            {
+              type: SelectFunctionFilterItem,
+              props: { name: 'function', label: '职能' }
+            },
+            {
+              type: SelectIndustryFilterItem,
+              props: { name: 'industry', label: '行业' }
+            },
+            {
+              type: SelectAddressFilterItem,
+              props: { name: 'city', label: '城市' }
             }
           ]
         ]}
@@ -191,7 +207,7 @@ render(<BaseExample />);
 
 ```jsx
 const { AdvancedFilter } = _ReactFilter;
-const { InputFilterItem, ListFilterItem } = AdvancedFilter.fields;
+const { InputFilterItem, ListFilterItem, CityFilterItem } = AdvancedFilter.fields;
 const { Flex, Button, message } = antd;
 const { useState } = React;
 
@@ -264,6 +280,16 @@ const AdvancedFilterExample = () => {
                 ]
               }
             }
+          ],
+          [
+            {
+              type: CityFilterItem,
+              props: {
+                name: 'city',
+                label: '城市',
+                maxLength: 3
+              }
+            }
           ]
         ]}
       />
@@ -292,8 +318,13 @@ render(<AdvancedFilterExample />);
 
 ```jsx
 const { fields, PopoverItem } = _ReactFilter;
-const { InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem, DateRangePickerFilterItem, TypeDateRangePickerFilterItem } = fields;
-const { Input, InputNumber, Space, Flex, Select } = antd;
+const {
+  InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem,
+  DateRangePickerFilterItem, TypeDateRangePickerFilterItem,
+  SuperSelectFilterItem, SelectFunctionFilterItem,
+  SelectIndustryFilterItem, SelectAddressFilterItem
+} = fields;
+const { Input, InputNumber, Space, Flex, Select, Divider, Tag } = antd;
 const { useState } = React;
 
 // 自定义下拉选择筛选项
@@ -401,7 +432,113 @@ const FilterFieldsExample = () => {
   );
 };
 
+// SuperSelect 业务选择器示例
+const departmentOptions = [
+  { value: 'tech', label: '技术研发部' },
+  { value: 'product', label: '产品设计部' },
+  { value: 'operation', label: '运营管理部' },
+  { value: 'hr', label: '人力资源部' },
+  { value: 'finance', label: '财务部' },
+  { value: 'marketing', label: '市场营销部' }
+];
+
+const SuperSelectExample = () => {
+  const [values, setValues] = useState({});
+
+  return (
+    <Flex vertical gap={24}>
+      <Flex align="center" gap={8}>
+        <h4 style={{ margin: 0 }}>SuperSelect 业务选择器</h4>
+        <Tag color="blue">单选/多选</Tag>
+        <Tag color="blue">搜索</Tag>
+        <Tag color="blue">全选</Tag>
+      </Flex>
+      <p style={{ margin: 0, color: '#666', fontSize: 12 }}>
+        基于 @kne/super-select 的通用选择器筛选项，支持单选/多选、搜索、全选等功能
+      </p>
+      <Flex wrap gap={16}>
+        <SuperSelectFilterItem
+          label="部门（多选）"
+          value={values.dept}
+          onChange={(val) => setValues(prev => ({ ...prev, dept: val }))}
+          options={departmentOptions}
+        />
+        <SuperSelectFilterItem
+          label="状态（单选）"
+          single
+          value={values.status}
+          onChange={(val) => setValues(prev => ({ ...prev, status: val }))}
+          options={[
+            { value: 'active', label: '启用' },
+            { value: 'inactive', label: '停用' }
+          ]}
+        />
+        <SuperSelectFilterItem
+          label="角色（全选）"
+          value={values.role}
+          onChange={(val) => setValues(prev => ({ ...prev, role: val }))}
+          options={[
+            { value: 'admin', label: '管理员' },
+            { value: 'editor', label: '编辑者' },
+            { value: 'viewer', label: '查看者' }
+          ]}
+          allowSelectedAll
+        />
+      </Flex>
+      <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4 }}>
+        {JSON.stringify(values, null, 2)}
+      </pre>
+    </Flex>
+  );
+};
+
+// 业务选择器示例（职能/行业/城市）
+const BusinessSelectExample = () => {
+  const [values, setValues] = useState({});
+
+  return (
+    <Flex vertical gap={24}>
+      <Flex align="center" gap={8}>
+        <h4 style={{ margin: 0 }}>业务选择器筛选项</h4>
+        <Tag color="blue">多级数据</Tag>
+        <Tag color="blue">拼音搜索</Tag>
+        <Tag color="blue">国际化</Tag>
+      </Flex>
+      <p style={{ margin: 0, color: '#666', fontSize: 12 }}>
+        基于 @kne/super-select-plus 的职能、行业、城市选择器，支持多级数据、拼音搜索、国际化
+      </p>
+      <Flex wrap gap={16}>
+        <SelectFunctionFilterItem
+          label="职能"
+          value={values.function}
+          onChange={(val) => setValues(prev => ({ ...prev, function: val }))}
+        />
+        <SelectIndustryFilterItem
+          label="行业"
+          value={values.industry}
+          onChange={(val) => setValues(prev => ({ ...prev, industry: val }))}
+        />
+        <SelectAddressFilterItem
+          label="城市（多选）"
+          value={values.city}
+          onChange={(val) => setValues(prev => ({ ...prev, city: val }))}
+        />
+        <SelectAddressFilterItem
+          label="城市（单选）"
+          single
+          value={values.singleCity}
+          onChange={(val) => setValues(prev => ({ ...prev, singleCity: val }))}
+        />
+      </Flex>
+    </Flex>
+  );
+};
+
 render(<FilterFieldsExample />);
+render(<Divider />);
+render(<SuperSelectExample />);
+render(<Divider />);
+render(<BusinessSelectExample />);
 
 ```
 
@@ -858,6 +995,107 @@ const MyFieldItem = withFieldItem(MyComponent);
 | name   | `string` | -              | 字段名称 |
 | label  | `string` | -              | 标签   |
 | format | `string` | `'YYYY-MM-DD'` | 日期格式 |
+
+#### SuperSelectFilterItem 通用选择器筛选
+
+基于 `@kne/super-select` 的通用选择器筛选项，支持单选/多选、搜索、全选等功能。
+
+| 属性               | 类型                          | 默认值     | 说明       |
+|------------------|-----------------------------|---------|----------|
+| name             | `string`                    | -       | 字段名称     |
+| label            | `string`                    | -       | 标签       |
+| options          | `Array<{ value, label }>`   | -       | 选项数据     |
+| single           | `boolean`                   | `false` | 是否单选     |
+| allowSelectedAll | `boolean`                   | `false` | 是否支持全选   |
+| maxLength        | `number`                    | -       | 最多可选数量   |
+
+**使用示例：**
+
+```javascript
+import { SuperSelectFilterItem } from '@kne/react-filter';
+
+// 多选
+<SuperSelectFilterItem
+  label="部门"
+  options={[
+    { value: 'tech', label: '技术研发部' },
+    { value: 'product', label: '产品设计部' }
+  ]}
+/>
+
+// 单选
+<SuperSelectFilterItem
+  label="状态"
+  single
+  options={[
+    { value: 'active', label: '启用' },
+    { value: 'inactive', label: '停用' }
+  ]}
+/>
+```
+
+> 注意：需要安装 `@kne/super-select` 依赖。
+
+#### SelectFunctionFilterItem 职能筛选
+
+基于 `@kne/super-select-plus` 的职能选择器筛选项，支持多级职能数据选择、拼音搜索。
+
+| 属性        | 类型        | 默认值     | 说明       |
+|-----------|-----------|---------|----------|
+| name      | `string`  | -       | 字段名称     |
+| label     | `string`  | -       | 标签       |
+| single    | `boolean` | `false` | 是否单选     |
+| maxLength | `number`  | -       | 最多可选数量   |
+
+> 注意：需要安装 `@kne/super-select-plus` 依赖。
+
+#### SelectIndustryFilterItem 行业筛选
+
+基于 `@kne/super-select-plus` 的行业选择器筛选项，支持多级行业数据选择、拼音搜索。
+
+| 属性        | 类型        | 默认值     | 说明       |
+|-----------|-----------|---------|----------|
+| name      | `string`  | -       | 字段名称     |
+| label     | `string`  | -       | 标签       |
+| single    | `boolean` | `false` | 是否单选     |
+| maxLength | `number`  | -       | 最多可选数量   |
+
+> 注意：需要安装 `@kne/super-select-plus` 依赖。
+
+#### SelectAddressFilterItem 城市筛选
+
+基于 `@kne/super-select-plus` 的城市选择器筛选项，支持国内外城市搜索选择。
+
+| 属性        | 类型        | 默认值     | 说明       |
+|-----------|-----------|---------|----------|
+| name      | `string`  | -       | 字段名称     |
+| label     | `string`  | -       | 标签       |
+| single    | `boolean` | `false` | 是否单选     |
+| maxLength | `number`  | -       | 最多可选数量   |
+
+> 注意：需要安装 `@kne/super-select-plus` 依赖。
+
+#### CityFilterItem（高级筛选）
+
+城市选择器的高级筛选版本，用于 `AdvancedFilter` 组件的 `list` 配置中。展示热门城市标签，支持搜索选择其他城市。
+
+| 属性        | 类型        | 默认值     | 说明         |
+|-----------|-----------|---------|------------|
+| single    | `boolean` | `false` | 是否单选       |
+| maxLength | `number`  | `5`     | 最多可选数量     |
+
+**在高级筛选中使用：**
+
+```javascript
+import { AdvancedFilter } from '@kne/react-filter';
+import { CityFilterItem } from './AdvancedFilter/fields';
+
+<AdvancedFilter
+  list={[
+    [{ type: CityFilterItem, props: { label: '城市', single: true } }]
+  ]}
+/>
+```
 
 ---
 

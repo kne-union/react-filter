@@ -23,7 +23,8 @@ const message = {
   thisMonth: '本月',
   last3Months: '近三个月',
   thisYear: '当年',
-  fullYear: '本年度'
+  fullYear: '本年度',
+  pleaseSelect: '请选择'
 };
 
 export default message;

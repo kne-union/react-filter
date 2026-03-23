@@ -23,7 +23,8 @@ const message = {
   thisMonth: 'This Month',
   last3Months: 'Last 3 Months',
   thisYear: 'Year to Date',
-  fullYear: 'Full Year'
+  fullYear: 'Full Year',
+  pleaseSelect: 'Please Select'
 };
 
 export default message;

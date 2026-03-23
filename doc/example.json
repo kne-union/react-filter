@@ -2,7 +2,7 @@
   "list": [
     {
       "title": "基础用法",
-      "description": "展示 Filter 组件的基础用法，包含多种筛选字段类型",
+      "description": "展示 Filter 组件的基础用法，包含所有筛选字段类型",
       "code": "./base.js",
       "scope": [
         {

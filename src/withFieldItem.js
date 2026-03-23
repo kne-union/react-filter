@@ -5,8 +5,7 @@ import style from './style.module.scss';
 const isNotEmpty = value => {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string' && value.trim() === '') return false;
-  if (Array.isArray(value) && value.length === 0) return false;
-  return true;
+  return !(Array.isArray(value) && value.length === 0);
 };
 
 const withFieldItem =
