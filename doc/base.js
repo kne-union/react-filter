@@ -74,11 +74,6 @@ const BaseExample = () => {
           ]
         ]}
         displayLine={1}
-        extra={
-          <Button type="primary" onClick={handleSearch}>
-            搜索
-          </Button>
-        }
       />
       <Flex gap={8}>
         <span>当前筛选值:</span>

@@ -2,6 +2,8 @@ import { DatePicker } from 'antd';
 import withFieldItem from '../withFieldItem';
 import dayjs from 'dayjs';
 import withLocale from '../withLocale';
+import style from '../style.module.scss';
+import classnames from 'classnames';
 
 const DatePickerFilterItem = withLocale(
   withFieldItem(({ value, onChange, picker = 'date', ...props }) => {
@@ -9,6 +11,13 @@ const DatePickerFilterItem = withLocale(
       <DatePicker
         {...props}
         picker={picker}
+        classNames={{
+          ...props.classNames,
+          popup: {
+            ...props.classNames?.popup,
+            root: classnames(props.classNames?.popup?.root, style['date-picker-popup'])
+          }
+        }}
         value={value && dayjs(value.value)}
         onChange={value => {
           const { format } = Object.assign({ format: 'YYYY-MM-DD' }, props);

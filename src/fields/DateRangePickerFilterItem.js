@@ -3,6 +3,7 @@ import withFieldItem from '../withFieldItem';
 import dayjs from 'dayjs';
 import style from '../style.module.scss';
 import withLocale from '../withLocale';
+import classnames from 'classnames';
 
 const DateRangePickerFilterItem = withLocale(
   withFieldItem(({ value, onChange, header, ...props }) => {
@@ -13,8 +14,10 @@ const DateRangePickerFilterItem = withLocale(
           {...props}
           allowEmpty={[false, false]}
           classNames={{
+            ...props.classNames,
             popup: {
-              root: style['date-range-picker-popup']
+              ...props.classNames?.popup,
+              root: classnames(props.classNames?.popup?.root, style['date-range-picker-popup'])
             }
           }}
           value={value && Array.isArray(value.value) && value.value.length === 2 && value.value.map(item => dayjs(item))}
