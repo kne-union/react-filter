@@ -1,14 +1,17 @@
 ### React Filter
 
-一个功能强大的 React 筛选组件库，支持多种筛选字段类型和灵活的布局方式。
+一个功能强大的 React 筛选组件库，支持多种筛选字段类型、灵活的布局方式，以及完善的 URL 参数双向同步能力。
 
 ### 主要特性
 
-- **多种筛选字段类型**：支持输入框、数字区间、日期选择、日期范围等常用筛选类型
+- **多种筛选字段类型**：支持输入框、数字区间、日期选择、日期范围、下拉选择等常用筛选类型，以及职能、行业、城市等业务选择器
 - **灵活布局**：支持普通筛选（横向布局）和高级筛选（垂直布局）两种模式
 - **展开收起**：筛选行支持展开收起功能，优化页面空间利用
 - **已选值展示**：自动展示已选筛选条件，支持单独删除和清空全部
 - **弹出层交互**：支持弹出层形式的筛选交互，确认后才生效
+- **URL 参数同步**：支持筛选值与 URL 参数的双向序列化/反序列化，自动清除已消费参数
+- **数据格式拦截器**：内置 `{id, name}` ↔ `{label, value}` 格式转换拦截器，适配 SuperSelect 场景
+- **声明式值映射**：提供 `createFilterValueMapper` 按字段声明转换规则，简化 `getFilterValue` 结果处理
 - **国际化支持**：内置中英文语言包，支持多语言切换
 - **高阶组件**：提供 `withFilterValue` 和 `withFieldItem` 高阶组件，便于扩展自定义字段
 
@@ -18,6 +21,7 @@
 - 复杂表单的筛选条件配置
 - 多条件组合查询场景
 - 需要展示已选筛选条件的场景
+- 需要筛选状态与 URL 参数同步保持的页面
 
 ### 快速开始
 
@@ -75,10 +79,31 @@ function MyComponent() {
 | `NumberRangeFilterItem` | 数字区间筛选 |
 | `DatePickerFilterItem` | 日期选择筛选 |
 | `DateRangePickerFilterItem` | 日期范围筛选 |
+| `TypeDateRangePickerFilterItem` | 类型日期范围筛选（日/周/月切换） |
+| `SuperSelectFilterItem` | 通用选择器筛选（单选/多选/搜索/全选） |
+| `SelectFunctionFilterItem` | 职能筛选（多级数据、拼音搜索） |
+| `SelectIndustryFilterItem` | 行业筛选（多级数据、拼音搜索） |
+| `SelectAddressFilterItem` | 城市筛选（国内外城市搜索） |
 
-### 依赖
+### URL 参数工具
 
-- React >= 16.8
-- antd >= 5.0.0
-- dayjs
-- lodash
+| 工具 | 说明 |
+|------|------|
+| `useUrlFilter` | 从 URL 参数初始化筛选状态的 hook |
+| `useUrlFilterValue` | 简化版 URL 筛选 hook，自动解析 filterParams[key] 格式 |
+| `filterToUrlParams` | 将筛选值序列化为 URL 参数 |
+| `parseFilterEntry` | 解析 URL 参数中的单个筛选值项 |
+| `takeFilterEntry` | 从 URL 参数中读取筛选值项 |
+| `createUrlFilterReader` | 创建 URL 筛选参数读取器 |
+| `createUrlParamsReader` | 创建通用 URL 参数读取器 |
+| `stripConsumedUrlParams` | 移除已消费的 URL 参数 |
+
+### 其他工具
+
+| 工具 | 说明 |
+|------|------|
+| `pickSelectValues` | 从筛选值中提取原始值数组 |
+| `createFilterValueMapper` | 声明式创建 mapFilterValue 函数 |
+| `filterInterceptors` | `{single, multi}` 拦截器集合 |
+| `singleSelectInterceptor` | 单选格式转换拦截器 |
+| `multiSelectInterceptor` | 多选格式转换拦截器 |

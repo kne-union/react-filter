@@ -21,7 +21,7 @@ export { default as DatePickerFilterItem } from './DatePickerFilterItem';
 export { default as DateRangePickerFilterItem } from './DateRangePickerFilterItem';
 export { default as TypeDateRangePickerFilterItem } from './TypeDateRangePickerFilterItem';
 
-export const SuperSelectFilterItem = withFieldItem(SuperSelect);
-export const SelectFunctionFilterItem = withFieldItem(SelectFunction);
-export const SelectIndustryFilterItem = withFieldItem(SelectIndustry);
-export const SelectAddressFilterItem = withFieldItem(SelectAddress);
+export const SuperSelectFilterItem = withFieldItem(SuperSelect, { forcePopup: true });
+export const SelectFunctionFilterItem = withFieldItem(SelectFunction, { forcePopup: true });
+export const SelectIndustryFilterItem = withFieldItem(SelectIndustry, { forcePopup: true });
+export const SelectAddressFilterItem = withFieldItem(SelectAddress, { forcePopup: true });
