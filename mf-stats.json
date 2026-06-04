@@ -1,8 +1,8 @@
 {
-  "id": "react_filter_1_0_2",
-  "name": "react_filter_1_0_2",
+  "id": "react_filter_1_0_3",
+  "name": "react_filter_1_0_3",
   "metaData": {
-    "name": "react_filter_1_0_2",
+    "name": "react_filter_1_0_3",
     "type": "app",
     "buildInfo": {
       "buildVersion": "0.1.0",
@@ -19,24 +19,24 @@
       "zip": "",
       "api": ""
     },
-    "globalName": "react_filter_1_0_2",
+    "globalName": "react_filter_1_0_3",
     "pluginVersion": "2.5.0",
     "publicPath": "auto"
   },
   "shared": [
     {
       "singleton": true,
-      "requiredVersion": "^1.0.2",
+      "requiredVersion": "^1.0.3",
       "shareScope": "default",
       "name": "@kne/current-lib_react-filter",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "eager": false,
-      "id": "react_filter_1_0_2:@kne/current-lib_react-filter",
+      "id": "react_filter_1_0_3:@kne/current-lib_react-filter",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/830.0ce6dfb5.chunk.js"
+            "static/js/830.42bd7a31.chunk.js"
           ]
         },
         "css": {
@@ -55,15 +55,15 @@
       "name": "@kne/global-context",
       "version": "1.3.2",
       "eager": false,
-      "id": "react_filter_1_0_2:@kne/global-context",
+      "id": "react_filter_1_0_3:@kne/global-context",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/628.ec7ef059.chunk.js",
-            "static/js/866.4e35264a.chunk.js",
-            "static/js/257.65f61ee7.chunk.js",
-            "static/js/638.856bd454.chunk.js"
+            "static/js/247.faad4f9f.chunk.js",
+            "static/js/628.825c2885.chunk.js",
+            "static/js/257.1919acb4.chunk.js",
+            "static/js/638.e61b0934.chunk.js"
           ]
         },
         "css": {
@@ -82,13 +82,13 @@
       "name": "@kne/react-fetch",
       "version": "1.5.5",
       "eager": false,
-      "id": "react_filter_1_0_2:@kne/react-fetch",
+      "id": "react_filter_1_0_3:@kne/react-fetch",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/201.0c228158.chunk.js",
-            "static/js/351.ca8a88a5.chunk.js"
+            "static/js/201.804fe909.chunk.js",
+            "static/js/351.77ced9fd.chunk.js"
           ]
         },
         "css": {
@@ -107,13 +107,13 @@
       "name": "@kne/react-intl",
       "version": "0.1.12",
       "eager": false,
-      "id": "react_filter_1_0_2:@kne/react-intl",
+      "id": "react_filter_1_0_3:@kne/react-intl",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/308.4d6b6e90.chunk.js",
-            "static/js/548.1b276982.chunk.js"
+            "static/js/308.5cd6b50e.chunk.js",
+            "static/js/548.540433b7.chunk.js"
           ]
         },
         "css": {
@@ -132,13 +132,13 @@
       "name": "@kne/remote-loader",
       "version": "1.4.6",
       "eager": false,
-      "id": "react_filter_1_0_2:@kne/remote-loader",
+      "id": "react_filter_1_0_3:@kne/remote-loader",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/467.1279fc2c.chunk.js",
-            "static/js/848.5c87ca10.chunk.js"
+            "static/js/467.fa8b1631.chunk.js",
+            "static/js/848.d992ffba.chunk.js"
           ]
         },
         "css": {
@@ -157,13 +157,13 @@
       "name": "antd",
       "version": "6.4.3",
       "eager": false,
-      "id": "react_filter_1_0_2:antd",
+      "id": "react_filter_1_0_3:antd",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/769.e0900d8a.chunk.js",
-            "static/js/787.c607d982.chunk.js"
+            "static/js/769.52721556.chunk.js",
+            "static/js/756.8692dce7.chunk.js"
           ]
         },
         "css": {
@@ -182,12 +182,12 @@
       "name": "axios",
       "version": "1.17.0",
       "eager": false,
-      "id": "react_filter_1_0_2:axios",
+      "id": "react_filter_1_0_3:axios",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/214.dc65e8ca.chunk.js"
+            "static/js/214.4b6845f9.chunk.js"
           ]
         },
         "css": {
@@ -206,13 +206,13 @@
       "name": "dayjs",
       "version": "1.11.21",
       "eager": false,
-      "id": "react_filter_1_0_2:dayjs",
+      "id": "react_filter_1_0_3:dayjs",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/446.d344cce9.chunk.js",
-            "static/js/288.9282423a.chunk.js"
+            "static/js/446.42cfa6a5.chunk.js",
+            "static/js/288.7e0507c1.chunk.js"
           ]
         },
         "css": {
@@ -231,13 +231,13 @@
       "name": "react-dom",
       "version": "18.3.1",
       "eager": false,
-      "id": "react_filter_1_0_2:react-dom",
+      "id": "react_filter_1_0_3:react-dom",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/950.207ce20e.chunk.js",
-            "static/js/86.b809b729.chunk.js"
+            "static/js/950.c4e2923a.chunk.js",
+            "static/js/86.4e796829.chunk.js"
           ]
         },
         "css": {
@@ -256,13 +256,13 @@
       "name": "react-router-dom",
       "version": "6.30.4",
       "eager": false,
-      "id": "react_filter_1_0_2:react-router-dom",
+      "id": "react_filter_1_0_3:react-router-dom",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/245.4c86d7a9.chunk.js",
-            "static/js/796.a095f5a9.chunk.js"
+            "static/js/245.1eba1fff.chunk.js",
+            "static/js/796.f0afdb34.chunk.js"
           ]
         },
         "css": {
@@ -281,13 +281,13 @@
       "name": "react",
       "version": "18.3.1",
       "eager": false,
-      "id": "react_filter_1_0_2:react",
+      "id": "react_filter_1_0_3:react",
       "assets": {
         "js": {
           "async": [],
           "sync": [
-            "static/js/43.e89da873.chunk.js",
-            "static/js/233.396a3681.chunk.js"
+            "static/js/43.5b05ff55.chunk.js",
+            "static/js/233.5d419275.chunk.js"
           ]
         },
         "css": {
@@ -304,28 +304,29 @@
   "exposes": [
     {
       "path": "./components",
-      "id": "react_filter_1_0_2:components",
+      "id": "react_filter_1_0_3:components",
       "name": "components",
       "requires": [],
       "file": "node_modules/readme/modules.js",
       "assets": {
         "js": {
           "sync": [
-            "static/js/872.55850516.chunk.js",
-            "static/js/__federation_expose_components.ab5d15b3.chunk.js"
+            "static/js/872.245874e7.chunk.js",
+            "static/js/__federation_expose_components.148dba2f.chunk.js"
           ],
           "async": [
-            "static/js/837.6709373b.chunk.js",
-            "static/js/147.3ba6fc85.chunk.js",
-            "static/js/326.7cdee1b3.chunk.js",
-            "static/js/956.8b902faf.chunk.js",
-            "static/js/927.42e0544e.chunk.js",
-            "static/js/754.bea73b55.chunk.js"
+            "static/js/837.b58059cb.chunk.js",
+            "static/js/831.4e1370ea.chunk.js",
+            "static/js/147.3c55a7e6.chunk.js",
+            "static/js/326.d2cd6ebe.chunk.js",
+            "static/js/956.26967451.chunk.js",
+            "static/js/927.bdc57992.chunk.js",
+            "static/js/754.6201fd95.chunk.js"
           ]
         },
         "css": {
           "sync": [
-            "static/css/__federation_expose_components.2aabcf1d.chunk.css"
+            "static/css/872.ee0a5bc4.chunk.css"
           ],
           "async": [
             "static/css/147.29086e1b.chunk.css"
