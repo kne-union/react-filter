@@ -58,6 +58,25 @@
       ]
     },
     {
+      "title": "搜索输入",
+      "description": "使用 SearchInput 实现顶部关键词搜索，输入停止 500ms 后自动提交筛选值，输入法组合输入完成后才开始触发搜索",
+      "code": "./search-input.js",
+      "scope": [
+        {
+          "name": "_ReactFilter",
+          "packageName": "@kne/current-lib_react-filter",
+          "importStatement": "import * as _ReactFilter from \"@kne/react-filter\""
+        },
+        {
+          "packageName": "@kne/current-lib_react-filter/dist/index.css"
+        },
+        {
+          "name": "antd",
+          "packageName": "antd"
+        }
+      ]
+    },
+    {
       "title": "已选值展示",
       "description": "使用 FilterValueDisplay 组件展示已选择的筛选条件，支持单独删除和清空全部",
       "code": "./filter-value-display.js",
