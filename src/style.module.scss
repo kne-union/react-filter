@@ -674,6 +674,31 @@
     }
   }
 
+  .filter-value-display {
+    padding: 6px 0;
+
+    > :global(.ant-space-item:last-child) {
+      overflow: visible;
+    }
+
+    .filter-line {
+      gap: 6px;
+      min-height: 28px;
+    }
+
+    .un-expand-shadow {
+      display: inline-flex;
+    }
+
+    .un-expand {
+      position: absolute;
+      display: inline-flex;
+      right: 0;
+      bottom: 0;
+      margin-left: 0;
+    }
+  }
+
   .filter-label {
     display: none;
   }
