@@ -8,7 +8,7 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
 
   return (
-    <Space className={style['filter-title']} align="top" size={16}>
+    <Space className={classnames(style['filter-title'], style['filter-value-display'])} align="top" size={16}>
       <span className={style['filter-label']}>{formatMessage({ id: 'selectedText' })}</span>
       <div className={style['filter-line']}>
         {filterValue.map(({ name, label, value }, index) => {
