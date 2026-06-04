@@ -27,7 +27,7 @@ const withFieldItem =
       if (typeof document === 'undefined') return;
       document.body.style.setProperty('--react-filter-field-mobile-height', `${metrics.height}px`);
       document.body.style.setProperty('--react-filter-popover-mobile-height', `${metrics.height}px`);
-      document.body.style.setProperty('--react-filter-field-mobile-top', `${metrics.pageTop}px`);
+      document.body.style.setProperty('--react-filter-field-mobile-top', `${metrics.top}px`);
     }, []);
     const updatePopupMetrics = useCallback(() => {
       if (typeof window === 'undefined' || !triggerRef.current) return;
@@ -35,7 +35,6 @@ const withFieldItem =
       const top = Math.max(rect.bottom + MOBILE_POPUP_OFFSET, 0);
       const metrics = {
         top,
-        pageTop: top + window.scrollY,
         height: Math.max(window.innerHeight - top, 0)
       };
       setPopupMetrics(metrics);
@@ -116,8 +115,8 @@ const withFieldItem =
       ? {
           '--react-filter-field-mobile-height': `${popupMetrics.height}px`,
           '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
-          '--react-filter-field-mobile-top': `${popupMetrics.pageTop}px`,
-          top: popupMetrics.pageTop,
+          '--react-filter-field-mobile-top': `${popupMetrics.top}px`,
+          top: popupMetrics.top,
           left: 0
         }
       : undefined;
@@ -177,6 +176,9 @@ const withFieldItem =
                 height: popupMetrics.height
               }}
               onClick={closeFieldItem}
+              onTouchMove={e => {
+                e.preventDefault();
+              }}
             />,
             document.body
           )}
