@@ -50,7 +50,6 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
     const top = Math.max(rect.bottom + MOBILE_POPUP_OFFSET, 0);
     setPopupMetrics({
       top,
-      pageTop: top + window.scrollY,
       height: Math.max(window.innerHeight - top, 0)
     });
   }, []);
@@ -104,7 +103,7 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
   const mobileOverlayStyle = isMobile
     ? {
         '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
-        top: popupMetrics.pageTop,
+        top: popupMetrics.top,
         left: 0
       }
     : undefined;
@@ -119,13 +118,13 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
       <div className={style['pop-util-content']}>{children({ value: state, onChange: setState })}</div>
       <Row className={style['pop-util-footer']} justify="end" gutter={8}>
         <Col>
-          <Button size="small" onClick={closeDropdown}>
+          <Button size={isMobile ? undefined : 'small'} onClick={closeDropdown}>
             {formatMessage({ id: 'cancelText' })}
           </Button>
         </Col>
         <Col>
           <Button
-            size="small"
+            size={isMobile ? undefined : 'small'}
             type="primary"
             disabled={disabled}
             onClick={() => {
@@ -152,6 +151,9 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
               height: popupMetrics.height
             }}
             onClick={closeDropdown}
+            onTouchMove={e => {
+              e.preventDefault();
+            }}
           />,
           document.body
         )}

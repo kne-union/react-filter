@@ -57,15 +57,18 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   const mobileList = list.reduce((result, item) => result.concat(Array.isArray(item) ? item : [item]), []);
   const [isExpand, setIsExpand] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showScrollPrev, setShowScrollPrev] = useState(false);
   const [showScrollNext, setShowScrollNext] = useState(false);
   const scrollRef = useRef(null);
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
-  const updateScrollNextVisible = useCallback(() => {
+  const updateScrollShadowVisible = useCallback(() => {
     const el = scrollRef.current;
     if (!el) {
+      setShowScrollPrev(false);
       setShowScrollNext(false);
       return;
     }
+    setShowScrollPrev(el.scrollLeft > 1);
     setShowScrollNext(el.scrollWidth > el.clientWidth && el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   }, []);
 
@@ -84,14 +87,15 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
 
   useEffect(() => {
     if (!isMobile) {
+      setShowScrollPrev(false);
       setShowScrollNext(false);
       return;
     }
     const el = scrollRef.current;
     if (!el) return;
-    updateScrollNextVisible();
+    updateScrollShadowVisible();
     const update = () => {
-      updateScrollNextVisible();
+      updateScrollShadowVisible();
     };
     el.addEventListener('scroll', update);
     window.addEventListener('resize', update);
@@ -101,7 +105,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
       window.removeEventListener('resize', update);
       window.cancelAnimationFrame(rafId);
     };
-  }, [isMobile, list, updateScrollNextVisible]);
+  }, [isMobile, list, updateScrollShadowVisible]);
 
   const scrollToNext = useCallback(() => {
     const el = scrollRef.current;
@@ -133,6 +137,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
         <Row justify="space-between" wrap={false} align="top">
           <Col className={style['filter-list']} flex={1}>
             <div className={style['filter-list-scroll-wrap']}>
+              {isMobile && showScrollPrev ? <div className={style['filter-scroll-prev-shadow']} /> : null}
               <div className={style['filter-list-scroll']} ref={scrollRef} onClick={scrollItemIntoView}>
                 {(isMobile ? mobileList : list.slice(0, displayLine)).map((item, index) => (
                   <Line key={index} list={isMobile ? [item] : item}>

@@ -2,6 +2,12 @@
   padding: 0 !important;
   border: none !important;
   font-size: var(--font-size-small, 12px) !important;
+
+  :global {
+    .ant-picker-input > input {
+      font-size: 16px;
+    }
+  }
 }
 
 .filter-item-icon {
@@ -318,9 +324,11 @@
   padding: 2px 8px;
   margin: 0;
   line-height: 20px;
+  font-size: var(--font-size-small, 12px) !important;
 
   :global(.ant-tag-close-icon) {
     color: var(--primary-color, #1890ff);
+    font-size: var(--font-size-small, 12px) !important;
   }
 }
 
@@ -330,6 +338,32 @@
 
 .filter-value-tag-content {
   color: var(--primary-color, #1890ff);
+}
+
+.filter-value-display-content {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.filter-value-tags-wrap {
+  position: relative;
+  min-width: 0;
+  padding-right: 96px;
+}
+
+.filter-value-tags {
+  gap: 8px;
+}
+
+.filter-value-actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.filter-value-toggle {
+  display: none;
 }
 
 .pop-util-content {
@@ -378,6 +412,7 @@
 }
 
 .field-item-mobile-popup {
+  position: fixed !important;
   left: 0 !important;
   right: auto !important;
   top: var(--react-filter-field-mobile-top) !important;
@@ -681,21 +716,116 @@
       overflow: visible;
     }
 
-    .filter-line {
+    .filter-value-display-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+
+      &.is-not-overflow {
+        flex-direction: row;
+        align-items: center;
+
+        .filter-value-tags-wrap {
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+
+        .filter-value-actions {
+          flex: 0 0 auto;
+          padding-top: 0;
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .filter-value-tags-wrap {
+      padding-right: 0;
+      overflow: hidden;
+
+      &.is-expand {
+        overflow: visible;
+      }
+    }
+
+    .filter-value-tags {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
       gap: 6px;
       min-height: 28px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-padding-inline: 8px 24px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &.is-expand {
+        flex-wrap: wrap;
+        overflow: visible;
+      }
+
+      .filter-value-tag {
+        flex: 0 0 auto;
+      }
     }
 
-    .un-expand-shadow {
-      display: inline-flex;
+    .filter-value-scroll-prev-shadow {
+      z-index: 1;
     }
 
-    .un-expand {
+    .filter-value-scroll-next-shadow {
       position: absolute;
-      display: inline-flex;
+      top: 0;
       right: 0;
-      bottom: 0;
-      margin-left: 0;
+      z-index: 1;
+      width: 24px;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff);
+      pointer-events: none;
+    }
+
+    .filter-value-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 6px;
+
+      &:not(.is-overflow) {
+        .filter-value-action-placeholder {
+          display: none;
+        }
+      }
+
+      :global(.ant-space) {
+        align-items: center;
+      }
+    }
+
+    .filter-value-action-right {
+      margin-left: auto;
+    }
+
+    .filter-value-action-placeholder {
+      display: none;
+    }
+
+    .filter-value-toggle {
+      position: absolute;
+      left: 50%;
+      display: inline-flex;
+      align-items: center;
+      transform: translateX(-50%);
+      height: auto;
+      padding: 0;
+      color: var(--primary-color, #1890ff);
+      font-size: var(--font-size-small, 12px);
+      line-height: 1;
     }
   }
 
@@ -735,6 +865,17 @@
     min-width: 0;
     max-width: 100%;
     overflow: hidden;
+  }
+
+  .filter-scroll-prev-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 24px;
+    height: 100%;
+    background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0));
+    pointer-events: none;
   }
 
   .filter-scroll-next {
@@ -786,6 +927,7 @@
   }
 
   .pop-util-overlay {
+    position: fixed !important;
     left: 0 !important;
     right: auto !important;
     width: 100vw;
@@ -814,6 +956,12 @@
 
     .pop-util-footer {
       flex: 0 0 auto;
+
+      :global(.ant-btn) {
+        height: 32px;
+        padding: 0 16px;
+        font-size: 14px;
+      }
     }
   }
 }
