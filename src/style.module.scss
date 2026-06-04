@@ -374,7 +374,7 @@
   display: block;
   background: #fff;
   border-radius: var(--radius-large, 8px);
-  box-shadow: var(--ant-box-shadow-secondary);
+  box-shadow: var(--ant-box-shadow-secondary, 0 10px 24px rgba(15, 23, 42, 0.06));
 }
 
 .date-range-picker-popup {
