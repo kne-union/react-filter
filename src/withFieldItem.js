@@ -23,16 +23,24 @@ const withFieldItem =
     const [maskClosing, setMaskClosing] = useState(false);
     const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
     const triggerRef = useRef(null);
+    const setMobilePopupVariables = useCallback(metrics => {
+      if (typeof document === 'undefined') return;
+      document.body.style.setProperty('--react-filter-field-mobile-height', `${metrics.height}px`);
+      document.body.style.setProperty('--react-filter-popover-mobile-height', `${metrics.height}px`);
+      document.body.style.setProperty('--react-filter-field-mobile-top', `${metrics.pageTop}px`);
+    }, []);
     const updatePopupMetrics = useCallback(() => {
       if (typeof window === 'undefined' || !triggerRef.current) return;
       const rect = triggerRef.current.getBoundingClientRect();
       const top = Math.max(rect.bottom + MOBILE_POPUP_OFFSET, 0);
-      setPopupMetrics({
+      const metrics = {
         top,
         pageTop: top + window.scrollY,
         height: Math.max(window.innerHeight - top, 0)
-      });
-    }, []);
+      };
+      setPopupMetrics(metrics);
+      setMobilePopupVariables(metrics);
+    }, [setMobilePopupVariables]);
 
     useEffect(() => {
       if (typeof window === 'undefined') return;
@@ -59,16 +67,14 @@ const withFieldItem =
     }, [isMobile, open, updatePopupMetrics]);
 
     useEffect(() => {
-      if (typeof document === 'undefined' || !isMobile) return;
-      document.body.style.setProperty('--react-filter-field-mobile-height', `${popupMetrics.height}px`);
-      document.body.style.setProperty('--react-filter-popover-mobile-height', `${popupMetrics.height}px`);
-      document.body.style.setProperty('--react-filter-field-mobile-top', `${popupMetrics.pageTop}px`);
+      if (typeof document === 'undefined' || !isMobile || popupMetrics.height <= 0) return;
+      setMobilePopupVariables(popupMetrics);
       return () => {
         document.body.style.removeProperty('--react-filter-field-mobile-height');
         document.body.style.removeProperty('--react-filter-popover-mobile-height');
         document.body.style.removeProperty('--react-filter-field-mobile-top');
       };
-    }, [isMobile, popupMetrics.height, popupMetrics.pageTop]);
+    }, [isMobile, popupMetrics, setMobilePopupVariables]);
 
     useEffect(() => {
       if (open && isMobile) {
@@ -110,7 +116,9 @@ const withFieldItem =
       ? {
           '--react-filter-field-mobile-height': `${popupMetrics.height}px`,
           '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
-          '--react-filter-field-mobile-top': `${popupMetrics.pageTop}px`
+          '--react-filter-field-mobile-top': `${popupMetrics.pageTop}px`,
+          top: popupMetrics.pageTop,
+          left: 0
         }
       : undefined;
 
@@ -145,11 +153,14 @@ const withFieldItem =
         popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
         dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
         overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
+        overlayStyle={Object.assign({}, props.overlayStyle, mobilePopupStyle)}
         popupStyle={Object.assign({}, props.popupStyle, mobilePopupStyle)}
         dropdownStyle={Object.assign({}, props.dropdownStyle, mobilePopupStyle)}
         classNames={mergePopupClassNames(props.classNames)}
         styles={mergePopupStyles(props.styles)}
         transitionName={isMobile ? '' : props.transitionName}
+        autoAdjustOverflow={isMobile ? false : props.autoAdjustOverflow}
+        align={isMobile ? { offset: [0, 0] } : props.align}
         isPopup={options.forcePopup ? true : props.isPopup}
         overlayWidth={isMobile && options.forcePopup ? (typeof window === 'undefined' ? props.overlayWidth : window.innerWidth) : props.overlayWidth}
       />

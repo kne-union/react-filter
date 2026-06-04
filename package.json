@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A React filter component library",
   "syntax": {
     "esmodules": true
@@ -91,7 +91,7 @@
   },
   "dependencies": {
     "@kne/react-intl": "^0.1.9",
-    "@kne/super-select": "^0.1.34",
+    "@kne/super-select": "^0.1.35",
     "@kne/super-select-plus": "^0.1.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.10",
