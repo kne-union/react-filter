@@ -1,7 +1,7 @@
 {
   "name": "@kne/react-filter",
   "version": "1.0.3",
-  "description": "A React filter component library",
+  "description": "A React filter component library with multiple filter types, flexible layouts, and URL parameter synchronization.",
   "syntax": {
     "esmodules": true
   },
@@ -46,7 +46,23 @@
     "type": "git",
     "url": "git+https://github.com/kne-union/react-filter.git"
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "antd",
+    "ant-design",
+    "filter",
+    "filtration",
+    "select",
+    "search",
+    "date-picker",
+    "multiselect",
+    "i18n",
+    "url-sync",
+    "popover",
+    "form",
+    "component",
+    "data-list"
+  ],
   "author": "linzp",
   "license": "ISC",
   "bugs": {

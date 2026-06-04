@@ -2,7 +2,7 @@
 
 ### 描述
 
-A React filter component library
+A React filter component library with multiple filter types, flexible layouts, and URL parameter synchronization.
 
 ### 安装
 

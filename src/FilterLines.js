@@ -1,10 +1,12 @@
 import classnames from 'classnames';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import style from './style.module.scss';
 import { Col, Row, Space } from 'antd';
 import { useIntl } from '@kne/react-intl';
 import { useContext } from './context';
 import get from 'lodash/get';
+import useMobile from './hooks/useMobile';
+import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 
 const Line = ({ list, children }) => {
   const { value, onChange } = useContext();
@@ -56,56 +58,9 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   const hasMore = list.length > displayLine;
   const mobileList = list.reduce((result, item) => result.concat(Array.isArray(item) ? item : [item]), []);
   const [isExpand, setIsExpand] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showScrollPrev, setShowScrollPrev] = useState(false);
-  const [showScrollNext, setShowScrollNext] = useState(false);
-  const scrollRef = useRef(null);
+  const isMobile = useMobile();
+  const { scrollRef, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({ enabled: isMobile, refreshKey: list });
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
-  const updateScrollShadowVisible = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) {
-      setShowScrollPrev(false);
-      setShowScrollNext(false);
-      return;
-    }
-    setShowScrollPrev(el.scrollLeft > 1);
-    setShowScrollNext(el.scrollWidth > el.clientWidth && el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const updateIsMobile = () => {
-      setIsMobile(mediaQuery.matches);
-    };
-    updateIsMobile();
-    mediaQuery.addEventListener ? mediaQuery.addEventListener('change', updateIsMobile) : mediaQuery.addListener(updateIsMobile);
-    return () => {
-      mediaQuery.removeEventListener ? mediaQuery.removeEventListener('change', updateIsMobile) : mediaQuery.removeListener(updateIsMobile);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) {
-      setShowScrollPrev(false);
-      setShowScrollNext(false);
-      return;
-    }
-    const el = scrollRef.current;
-    if (!el) return;
-    updateScrollShadowVisible();
-    const update = () => {
-      updateScrollShadowVisible();
-    };
-    el.addEventListener('scroll', update);
-    window.addEventListener('resize', update);
-    const rafId = window.requestAnimationFrame(update);
-    return () => {
-      el.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-      window.cancelAnimationFrame(rafId);
-    };
-  }, [isMobile, list, updateScrollShadowVisible]);
 
   const scrollToNext = useCallback(() => {
     const el = scrollRef.current;
@@ -114,7 +69,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
       left: el.scrollLeft + el.clientWidth * 0.8,
       behavior: 'smooth'
     });
-  }, []);
+  }, [scrollRef]);
   const scrollItemIntoView = useCallback(
     e => {
       if (!isMobile) return;
@@ -127,7 +82,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
         inline: 'center'
       });
     },
-    [isMobile]
+    [isMobile, scrollRef]
   );
 
   return (
