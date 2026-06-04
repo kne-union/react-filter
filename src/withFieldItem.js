@@ -139,31 +139,35 @@ const withFieldItem =
       });
     };
 
-    const renderChildren = otherProps => (
-      <WrappedComponent
-        allowClear={false}
-        {...Object.assign({}, props, otherProps)}
-        className={style['filter-item-inner']}
-        value={typeof interceptor?.input === 'function' ? interceptor.input(value) : value}
-        onChange={typeof interceptor?.output === 'function' ? (...args) => onChange(interceptor.output(...args)) : onChange}
-        valueType="all"
-        onOpenChange={handleOpenChange}
-        onDropdownVisibleChange={handleOpenChange}
-        popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
-        dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
-        overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
-        overlayStyle={Object.assign({}, props.overlayStyle, mobilePopupStyle)}
-        popupStyle={Object.assign({}, props.popupStyle, mobilePopupStyle)}
-        dropdownStyle={Object.assign({}, props.dropdownStyle, mobilePopupStyle)}
-        classNames={mergePopupClassNames(props.classNames)}
-        styles={mergePopupStyles(props.styles)}
-        transitionName={isMobile ? '' : props.transitionName}
-        autoAdjustOverflow={isMobile ? false : props.autoAdjustOverflow}
-        align={isMobile ? { offset: [0, 0] } : props.align}
-        isPopup={options.forcePopup ? true : props.isPopup}
-        overlayWidth={isMobile && options.forcePopup ? (typeof window === 'undefined' ? props.overlayWidth : window.innerWidth) : props.overlayWidth}
-      />
-    );
+    const renderChildren = otherProps => {
+      const inputValue = typeof interceptor?.input === 'function' ? interceptor.input(value) : value;
+      const fieldValue = options.forcePopup && inputValue == null ? (props.single ? null : []) : inputValue;
+      return (
+        <WrappedComponent
+          allowClear={false}
+          {...Object.assign({}, props, otherProps)}
+          className={style['filter-item-inner']}
+          value={fieldValue}
+          onChange={typeof interceptor?.output === 'function' ? (...args) => onChange(interceptor.output(...args)) : onChange}
+          valueType="all"
+          onOpenChange={handleOpenChange}
+          onDropdownVisibleChange={handleOpenChange}
+          popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
+          dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
+          overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
+          overlayStyle={Object.assign({}, props.overlayStyle, mobilePopupStyle)}
+          popupStyle={Object.assign({}, props.popupStyle, mobilePopupStyle)}
+          dropdownStyle={Object.assign({}, props.dropdownStyle, mobilePopupStyle)}
+          classNames={mergePopupClassNames(props.classNames)}
+          styles={mergePopupStyles(props.styles)}
+          transitionName={isMobile ? '' : props.transitionName}
+          autoAdjustOverflow={isMobile ? false : props.autoAdjustOverflow}
+          align={isMobile ? { offset: [0, 0] } : props.align}
+          isPopup={options.forcePopup ? true : props.isPopup}
+          overlayWidth={isMobile && options.forcePopup ? (typeof window === 'undefined' ? props.overlayWidth : window.innerWidth) : props.overlayWidth}
+        />
+      );
+    };
     return (
       <>
         {renderMask &&
