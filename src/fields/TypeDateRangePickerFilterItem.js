@@ -19,6 +19,7 @@ const TypeDateRangePickerFilterItem = withLocale(({ label, value, onChange, ...p
       {({ value, onChange }) => (
         <TypeDateRangePickerField
           {...props}
+          inputReadOnly
           className={style['filter-item-text']}
           value={get(value, 'value')}
           onChange={pickerValue => {

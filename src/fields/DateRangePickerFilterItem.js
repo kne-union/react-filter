@@ -12,6 +12,7 @@ const DateRangePickerFilterItem = withLocale(
         {typeof header === 'function' ? header({ value, onChange }) : header}
         <DatePicker.RangePicker
           {...props}
+          inputReadOnly
           allowEmpty={[false, false]}
           classNames={{
             ...props.classNames,

@@ -675,7 +675,7 @@
   }
 
   .filter-value-display {
-    padding: 6px var(--padding-width, 16px);
+    padding: 6px 0;
 
     > :global(.ant-space-item:last-child) {
       overflow: visible;
@@ -687,13 +687,15 @@
     }
 
     .un-expand-shadow {
-      display: none;
+      display: inline-flex;
     }
 
     .un-expand {
-      position: static;
+      position: absolute;
       display: inline-flex;
-      margin-left: 2px;
+      right: 0;
+      bottom: 0;
+      margin-left: 0;
     }
   }
 

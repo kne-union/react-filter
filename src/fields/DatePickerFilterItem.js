@@ -10,6 +10,7 @@ const DatePickerFilterItem = withLocale(
     return (
       <DatePicker
         {...props}
+        inputReadOnly
         picker={picker}
         classNames={{
           ...props.classNames,
