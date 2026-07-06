@@ -3,9 +3,9 @@ import withFieldItem from '../withFieldItem';
 import InputFilterItemField from './InputFilterItem';
 import NumberRangeFilterItemField from './NumberRangeFilterItem';
 import withLocale from '../withLocale';
-import SuperSelect from '@kne/super-select';
+import SuperSelect, { SelectCascader, SelectTableList, SelectTree } from '@kne/super-select';
 import { SelectAddress, SelectFunction, SelectIndustry } from '@kne/super-select-plus';
-import '@kne/super-select-plus/dist/index.css';
+import '@kne/super-select/dist/index.css';
 import '@kne/super-select-plus/dist/index.css';
 
 const withInputDefaultPlaceholder = WrappedComponent =>
@@ -22,6 +22,9 @@ export { default as DateRangePickerFilterItem } from './DateRangePickerFilterIte
 export { default as TypeDateRangePickerFilterItem } from './TypeDateRangePickerFilterItem';
 
 export const SuperSelectFilterItem = withFieldItem(SuperSelect, { forcePopup: true });
+export const SelectTableListFilterItem = withFieldItem(SelectTableList, { forcePopup: true });
+export const SelectTreeFilterItem = withFieldItem(SelectTree, { forcePopup: true });
+export const SelectCascaderFilterItem = withFieldItem(SelectCascader, { forcePopup: true });
 export const SelectFunctionFilterItem = withFieldItem(SelectFunction, { forcePopup: true });
 export const SelectIndustryFilterItem = withFieldItem(SelectIndustry, { forcePopup: true });
 export const SelectAddressFilterItem = withFieldItem(SelectAddress, { forcePopup: true });

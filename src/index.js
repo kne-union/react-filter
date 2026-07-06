@@ -70,6 +70,9 @@ export {
   DateRangePickerFilterItem,
   TypeDateRangePickerFilterItem,
   SuperSelectFilterItem,
+  SelectTableListFilterItem,
+  SelectTreeFilterItem,
+  SelectCascaderFilterItem,
   SelectFunctionFilterItem,
   SelectIndustryFilterItem,
   SelectAddressFilterItem

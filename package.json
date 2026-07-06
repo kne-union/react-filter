@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A React filter component library with multiple filter types, flexible layouts, and URL parameter synchronization.",
   "syntax": {
     "esmodules": true
