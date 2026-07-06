@@ -15,9 +15,9 @@ export const normalizeFilterList = list => {
     return { mode: 'flat', items: [], lines: [] };
   }
   if (isNestedFilterList(safeList)) {
-    return { mode: 'nested', items: null, lines: safeList };
+    return { mode: 'nested', items: [], lines: safeList };
   }
-  return { mode: 'flat', items: safeList, lines: null };
+  return { mode: 'flat', items: safeList, lines: [] };
 };
 
 export const getMobileFilterList = list => {
