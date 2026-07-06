@@ -4,13 +4,14 @@ const GAP = 8;
 const SAFETY_GAP = 2;
 
 const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
+  const safeItems = Array.isArray(items) ? items : [];
   const containerRef = useRef(null);
   const measureRef = useRef(null);
   const moreMeasureRef = useRef(null);
   const rafRef = useRef(null);
   const lastWidthRef = useRef(0);
   const [containerEl, setContainerEl] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(() => (items.length > 0 ? 1 : 0));
+  const [visibleCount, setVisibleCount] = useState(() => (safeItems.length > 0 ? 1 : 0));
 
   const setContainerRef = useCallback(node => {
     containerRef.current = node;
@@ -43,13 +44,13 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
     }
 
     const moreButtonWidth = moreMeasureRef.current?.getBoundingClientRect().width || 0;
-    if (items.length > 1 && moreButtonWidth <= 0) {
+    if (safeItems.length > 1 && moreButtonWidth <= 0) {
       return null;
     }
 
     const itemWidths = Array.from(itemNodes, node => node.getBoundingClientRect().width);
     return { containerWidth, itemWidths, moreButtonWidth };
-  }, [items.length]);
+  }, [safeItems.length]);
 
   const getWidthForCount = useCallback(
     (itemWidths, moreButtonWidth, count) => {
@@ -58,19 +59,19 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
         usedWidth += itemWidths[i] + (i > 0 ? GAP : 0);
       }
 
-      if (count < items.length) {
+      if (count < safeItems.length) {
         usedWidth += GAP + moreButtonWidth;
       }
 
       return usedWidth;
     },
-    [items.length]
+    [safeItems.length]
   );
 
   const resolveVisibleCount = useCallback(
     widths => {
       const { containerWidth, itemWidths, moreButtonWidth } = widths;
-      const maxCount = Math.min(items.length, itemWidths.length);
+      const maxCount = Math.min(safeItems.length, itemWidths.length);
       let count = 1;
 
       if (strategy === 'desc') {
@@ -96,12 +97,12 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
 
       return Math.max(1, count);
     },
-    [getWidthForCount, items.length, strategy]
+    [getWidthForCount, safeItems.length, strategy]
   );
 
   const calculateByWidth = useCallback(() => {
-    if (!enabled || !items.length) {
-      setVisibleCount(prev => (prev === items.length ? prev : items.length));
+    if (!enabled || !safeItems.length) {
+      setVisibleCount(prev => (prev === safeItems.length ? prev : safeItems.length));
       return;
     }
 
@@ -112,7 +113,7 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
 
     const nextCount = resolveVisibleCount(widths);
     setVisibleCount(prev => (prev === nextCount ? prev : nextCount));
-  }, [enabled, getWidths, items.length, resolveVisibleCount]);
+  }, [enabled, getWidths, safeItems.length, resolveVisibleCount]);
 
   const scheduleCalculate = useCallback(() => {
     if (rafRef.current) {
@@ -133,7 +134,7 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
         rafRef.current = null;
       }
     };
-  }, [items, scheduleCalculate]);
+  }, [safeItems, scheduleCalculate]);
 
   useEffect(() => {
     if (!enabled || !containerEl) {
