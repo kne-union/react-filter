@@ -81,6 +81,9 @@ function MyComponent() {
 | `DateRangePickerFilterItem` | 日期范围筛选 |
 | `TypeDateRangePickerFilterItem` | 类型日期范围筛选（日/周/月切换） |
 | `SuperSelectFilterItem` | 通用选择器筛选（单选/多选/搜索/全选） |
+| `SelectTableListFilterItem` | 表格选择器筛选（多列数据展示） |
+| `SelectTreeFilterItem` | 树形选择器筛选（层级数据） |
+| `SelectCascaderFilterItem` | 级联选择器筛选（父子关联、搜索过滤） |
 | `SelectFunctionFilterItem` | 职能筛选（多级数据、拼音搜索） |
 | `SelectIndustryFilterItem` | 行业筛选（多级数据、拼音搜索） |
 | `SelectAddressFilterItem` | 城市筛选（国内外城市搜索） |

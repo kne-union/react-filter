@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import style from './style.module.scss';
 import { Col, Row, Space } from 'antd';
 import { useIntl } from '@kne/react-intl';
@@ -7,60 +7,127 @@ import { useContext } from './context';
 import get from 'lodash/get';
 import useMobile from './hooks/useMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
+import useVisibleItemCount from './hooks/useVisibleItemCount';
+import { getMobileFilterList, normalizeFilterList } from './normalizeFilterList';
 
-const Line = ({ list, children }) => {
+const isValidFilterItem = item => !!item && (item.type || typeof item === 'function');
+
+const useFilterItemRenderer = () => {
   const { value, onChange } = useContext();
+
+  return useCallback(
+    (item, index) => {
+      if (typeof item === 'function') {
+        return item(props => ({
+          index,
+          value: value ? get(value.get(props?.name), 'value') : props?.value,
+          onChange: onChange
+            ? nextValue =>
+                onChange({
+                  name: props?.name,
+                  label: props?.label,
+                  value: nextValue
+                })
+            : props?.onChange
+        }));
+      }
+
+      const ComponentItem = item.type;
+      return (
+        <ComponentItem
+          {...Object.assign({}, item.props, {
+            value: value ? get(value.get(item.props.name), 'value') : item.props.value,
+            onChange: onChange
+              ? nextValue =>
+                  onChange({
+                    name: item.props.name,
+                    label: item.props.label,
+                    value: nextValue
+                  })
+              : item.props.onChange
+          })}
+          key={item.key || item.props.name || index}
+        />
+      );
+    },
+    [onChange, value]
+  );
+};
+
+const Line = ({ list, children, innerRef, nowrap }) => {
+  const renderItem = useFilterItemRenderer();
+
   return (
-    <div className={style['filter-line']}>
-      {list
-        .filter(item => !!item.type)
-        .map((item, index) => {
-          if (typeof item === 'function') {
-            return item(props => {
-              return {
-                index,
-                value: value ? get(value.get(props?.name), 'value') : props?.value,
-                onChange: onChange
-                  ? value =>
-                      onChange({
-                        name: props?.name,
-                        label: props?.label,
-                        value
-                      })
-                  : props?.onChange
-              };
-            });
-          }
-          const ComponentItem = item.type;
-          return (
-            <ComponentItem
-              {...Object.assign({}, item.props, {
-                value: value ? get(value.get(item.props.name), 'value') : item.props.value,
-                onChange: onChange
-                  ? value =>
-                      onChange({
-                        name: item.props.name,
-                        label: item.props.label,
-                        value
-                      })
-                  : item.props.onChange
-              })}
-              key={item.key || item.props.name || index}
-            />
-          );
-        })}
+    <div
+      ref={innerRef}
+      className={classnames(style['filter-line'], {
+        [style['filter-line-nowrap']]: nowrap
+      })}
+    >
+      {list.filter(isValidFilterItem).map((item, index) => renderItem(item, index))}
       {children}
     </div>
   );
 };
 
-const FilterLines = ({ className, list = [], displayLine = 1, label, extra, children }) => {
-  const hasMore = list.length > displayLine;
-  const mobileList = list.reduce((result, item) => result.concat(Array.isArray(item) ? item : [item]), []);
+const CollapseButtons = ({ onClick, toggleUpText }) => (
+  <>
+    <Space size={4} className={classnames(style['un-expand-shadow'])}>
+      <Space size={4} className={classnames(style['option'], style['filter-item'])}>
+        {toggleUpText}
+        <span className={style['filter-item-option-icon']}>▲</span>
+      </Space>
+    </Space>
+    <Space size={4} className={classnames(style['un-expand'])} onClick={onClick}>
+      <Space size={4} className={classnames(style['option'], style['filter-item'])}>
+        {toggleUpText}
+        <span className={style['filter-item-option-icon']}>▲</span>
+      </Space>
+    </Space>
+  </>
+);
+
+const FilterLines = ({ className, list = [], displayLine = 1, label, extra, children, visibleCountStrategy = 'asc' }) => {
+  const { mode, items: flatItems, lines } = useMemo(() => normalizeFilterList(list), [list]);
+  const mobileList = useMemo(() => getMobileFilterList(list), [list]);
+  const isFlatMode = mode === 'flat';
   const [isExpand, setIsExpand] = useState(false);
   const isMobile = useMobile();
   const { scrollRef, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({ enabled: isMobile, refreshKey: list });
+  const { setContainerRef, setMeasureRef, setMoreMeasureRef, visibleCount } = useVisibleItemCount({
+    items: flatItems,
+    enabled: !isMobile && isFlatMode,
+    strategy: visibleCountStrategy
+  });
+  const renderItem = useFilterItemRenderer();
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
+
+  const visibleFlatItems = isFlatMode ? flatItems.slice(0, visibleCount) : [];
+  const hiddenFlatItems = isFlatMode ? flatItems.slice(visibleCount) : [];
+  const hasMoreFlat = hiddenFlatItems.length > 0;
+  const hasMoreNested = !isFlatMode && lines.length > displayLine;
+  const hasMore = isFlatMode ? hasMoreFlat : hasMoreNested;
+  const visibleLines = !isFlatMode ? lines.slice(0, displayLine) : [];
+  const hiddenLines = !isFlatMode ? lines.slice(displayLine) : [];
+  const showLabel = isFlatMode ? flatItems.length > 0 : lines.length > 0;
+
+  const setScrollContainerRef = useCallback(
+    node => {
+      scrollRef.current = node;
+    },
+    [scrollRef]
+  );
+
+  const setMeasureContainerRef = useCallback(
+    node => {
+      if (!isMobile && isFlatMode) {
+        setContainerRef(node);
+      } else {
+        setContainerRef(null);
+      }
+    },
+    [isFlatMode, isMobile, setContainerRef]
+  );
 
   const scrollToNext = useCallback(() => {
     const el = scrollRef.current;
@@ -70,6 +137,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
       behavior: 'smooth'
     });
   }, [scrollRef]);
+
   const scrollItemIntoView = useCallback(
     e => {
       if (!isMobile) return;
@@ -85,31 +153,85 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
     [isMobile, scrollRef]
   );
 
+  const toggleExpand = useCallback(() => {
+    setIsExpand(value => !value);
+  }, []);
+
+  const moreButtonLabel = (
+    <>
+      {formatMessage({ id: 'moreText' })}
+      <span className={style['filter-item-option-icon']}>▼</span>
+    </>
+  );
+
+  const moreButton = (
+    <Space size={4} className={classnames(style['filter-item'], style['option'])} onClick={toggleExpand}>
+      {moreButtonLabel}
+    </Space>
+  );
+
+  const renderDesktopContent = () => {
+    if (isFlatMode) {
+      return (
+        <Line list={visibleFlatItems} nowrap={hasMoreFlat && !isExpand}>
+          {hasMoreFlat && !isExpand ? <span data-filter-more>{moreButton}</span> : null}
+        </Line>
+      );
+    }
+
+    return visibleLines.map((line, index) => (
+      <Line key={index} list={line}>
+        {hasMoreNested && !isExpand && index === displayLine - 1 ? moreButton : null}
+      </Line>
+    ));
+  };
+
+  const renderExpandedContent = () => {
+    if (isFlatMode) {
+      if (!hiddenFlatItems.length) return null;
+      return (
+        <Line list={hiddenFlatItems}>
+          <CollapseButtons onClick={toggleExpand} toggleUpText={formatMessage({ id: 'toggleUpText' })} />
+        </Line>
+      );
+    }
+
+    return hiddenLines.map((line, index) => (
+      <Line key={index} list={line}>
+        {index === hiddenLines.length - 1 ? <CollapseButtons onClick={toggleExpand} toggleUpText={formatMessage({ id: 'toggleUpText' })} /> : null}
+      </Line>
+    ));
+  };
+
   return (
     <>
       <Space className={classnames(style['filter-title'], 'filter-title', className)} align="top" size={16}>
-        <span className={style['filter-label']}>{list && list.length > 0 && (label || formatMessage({ id: 'filterText' }))}</span>
+        <span className={style['filter-label']}>{showLabel && (label || formatMessage({ id: 'filterText' }))}</span>
         <Row justify="space-between" wrap={false} align="top">
           <Col className={style['filter-list']} flex={1}>
-            <div className={style['filter-list-scroll-wrap']}>
+            <div
+              ref={setMeasureContainerRef}
+              className={classnames(style['filter-list-scroll-wrap'], {
+                [style['filter-list-constrained']]: !isMobile && isFlatMode
+              })}
+            >
+              {!isMobile && isFlatMode ? (
+                <div ref={setMeasureRef} className={classnames(style['filter-line'], style['filter-line-measure'])} aria-hidden>
+                  {flatItems.filter(isValidFilterItem).map((item, index) => (
+                    <div key={item.key || item.props?.name || index} data-filter-measure-item>
+                      {renderItem(item, index)}
+                    </div>
+                  ))}
+                  <div ref={setMoreMeasureRef} data-filter-measure-more>
+                    <Space size={4} className={classnames(style['filter-item'], style['option'])}>
+                      {moreButtonLabel}
+                    </Space>
+                  </div>
+                </div>
+              ) : null}
               {isMobile && showScrollPrev ? <div className={style['filter-scroll-prev-shadow']} /> : null}
-              <div className={style['filter-list-scroll']} ref={scrollRef} onClick={scrollItemIntoView}>
-                {(isMobile ? mobileList : list.slice(0, displayLine)).map((item, index) => (
-                  <Line key={index} list={isMobile ? [item] : item}>
-                    {!isMobile && hasMore && isExpand === false && index === displayLine - 1 ? (
-                      <Space
-                        size={4}
-                        className={classnames(style['filter-item'], style['option'])}
-                        onClick={() => {
-                          setIsExpand(value => !value);
-                        }}
-                      >
-                        {formatMessage({ id: 'moreText' })}
-                        <span className={style['filter-item-option-icon']}>▼</span>
-                      </Space>
-                    ) : null}
-                  </Line>
-                ))}
+              <div className={style['filter-list-scroll']} ref={setScrollContainerRef} onClick={scrollItemIntoView}>
+                {isMobile ? mobileList.map((item, index) => <Line key={index} list={[item]} />) : renderDesktopContent()}
               </div>
               {isMobile && showScrollNext ? (
                 <button type="button" className={style['filter-scroll-next']} onClick={scrollToNext} aria-label="scroll next">
@@ -132,34 +254,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
         size={16}
       >
         <span className={style['filter-label']}>{formatMessage({ id: 'moreText' })}</span>
-        <div className={style['filter-list']}>
-          {list.slice(displayLine).map((item, index) => (
-            <Line key={index} list={item}>
-              {index === list.length - displayLine - 1 && (
-                <>
-                  <Space size={4} className={classnames(style['un-expand-shadow'])}>
-                    <Space size={4} className={classnames(style['option'], style['filter-item'])}>
-                      {formatMessage({ id: 'toggleUpText' })}
-                      <span className={style['filter-item-option-icon']}>▲</span>
-                    </Space>
-                  </Space>
-                  <Space
-                    size={4}
-                    className={classnames(style['un-expand'])}
-                    onClick={() => {
-                      setIsExpand(value => !value);
-                    }}
-                  >
-                    <Space size={4} className={classnames(style['option'], style['filter-item'])}>
-                      {formatMessage({ id: 'toggleUpText' })}
-                      <span className={style['filter-item-option-icon']}>▲</span>
-                    </Space>
-                  </Space>
-                </>
-              )}
-            </Line>
-          ))}
-        </div>
+        <div className={style['filter-list']}>{renderExpandedContent()}</div>
       </Space>
     </>
   );

@@ -2,8 +2,8 @@ const { fields, PopoverItem } = _ReactFilter;
 const {
   InputFilterItem, NumberRangeFilterItem, DatePickerFilterItem,
   DateRangePickerFilterItem, TypeDateRangePickerFilterItem,
-  SuperSelectFilterItem, SelectFunctionFilterItem,
-  SelectIndustryFilterItem, SelectAddressFilterItem
+  SuperSelectFilterItem, SelectTableListFilterItem, SelectTreeFilterItem, SelectCascaderFilterItem,
+  SelectFunctionFilterItem, SelectIndustryFilterItem, SelectAddressFilterItem
 } = fields;
 const { Input, InputNumber, Space, Flex, Select, Divider, Tag } = antd;
 const { useState } = React;
@@ -173,6 +173,120 @@ const SuperSelectExample = () => {
   );
 };
 
+// SuperSelect 其他选择组件示例（表格/树形/级联）
+const employeeOptions = [
+  { id: 'emp_1', name: '张三', department: '技术研发部', position: '工程师' },
+  { id: 'emp_2', name: '李四', department: '产品设计部', position: '设计师' },
+  { id: 'emp_3', name: '王五', department: '运营部', position: '经理' },
+  { id: 'emp_4', name: '赵六', department: '市场部', position: '专员' },
+  { id: 'emp_5', name: '钱七', department: '技术研发部', position: '工程师' }
+];
+
+const employeeColumns = [
+  { name: 'name', title: '姓名', span: 8 },
+  { name: 'department', title: '部门', span: 8 },
+  { name: 'position', title: '职位', span: 8 }
+];
+
+const organizationTree = [
+  { id: 'root', parentId: null, name: '集团总部' },
+  { id: 'tech', parentId: 'root', name: '技术中心' },
+  { id: 'tech-fe', parentId: 'tech', name: '前端开发组' },
+  { id: 'tech-be', parentId: 'tech', name: '后端开发组' },
+  { id: 'product', parentId: 'root', name: '产品中心' },
+  { id: 'product-design', parentId: 'product', name: '产品设计组' }
+];
+
+const regionData = [
+  {
+    id: 'beijing',
+    name: '北京市',
+    children: [
+      { id: 'haidian', name: '海淀区' },
+      { id: 'chaoyang', name: '朝阳区' }
+    ]
+  },
+  {
+    id: 'guangdong',
+    name: '广东省',
+    children: [
+      {
+        id: 'guangzhou',
+        name: '广州市',
+        children: [
+          { id: 'tianhe', name: '天河区' },
+          { id: 'yuexiu', name: '越秀区' }
+        ]
+      },
+      {
+        id: 'shenzhen',
+        name: '深圳市',
+        children: [
+          { id: 'nanshan', name: '南山区' },
+          { id: 'futian', name: '福田区' }
+        ]
+      }
+    ]
+  }
+];
+
+const SuperSelectVariantsExample = () => {
+  const [values, setValues] = useState({});
+
+  return (
+    <Flex vertical gap={24}>
+      <Flex align="center" gap={8}>
+        <h4 style={{ margin: 0 }}>SuperSelect 其他选择组件</h4>
+        <Tag color="blue">表格</Tag>
+        <Tag color="blue">树形</Tag>
+        <Tag color="blue">级联</Tag>
+      </Flex>
+      <p style={{ margin: 0, color: '#666', fontSize: 12 }}>
+        基于 @kne/super-select 的表格、树形、级联选择器筛选项，适用于多列数据、层级结构、级联数据等场景
+      </p>
+      <Flex wrap gap={16}>
+        <SelectTableListFilterItem
+          label="员工（表格多选）"
+          value={values.employee}
+          onChange={(val) => setValues(prev => ({ ...prev, employee: val }))}
+          options={employeeOptions}
+          columns={employeeColumns}
+          valueKey="id"
+          labelKey="name"
+        />
+        <SelectTreeFilterItem
+          label="部门（树形多选）"
+          value={values.department}
+          onChange={(val) => setValues(prev => ({ ...prev, department: val }))}
+          options={organizationTree}
+          valueKey="id"
+          labelKey="name"
+        />
+        <SelectCascaderFilterItem
+          label="地区（级联多选）"
+          value={values.region}
+          onChange={(val) => setValues(prev => ({ ...prev, region: val }))}
+          options={regionData}
+          valueKey="id"
+          labelKey="name"
+        />
+        <SelectCascaderFilterItem
+          label="地区（级联单选）"
+          single
+          value={values.singleRegion}
+          onChange={(val) => setValues(prev => ({ ...prev, singleRegion: val }))}
+          options={regionData}
+          valueKey="id"
+          labelKey="name"
+        />
+      </Flex>
+      <pre style={{ margin: 0, background: '#f5f5f5', padding: 8, borderRadius: 4 }}>
+        {JSON.stringify(values, null, 2)}
+      </pre>
+    </Flex>
+  );
+};
+
 // 业务选择器示例（职能/行业/城市）
 const BusinessSelectExample = () => {
   const [values, setValues] = useState({});
@@ -215,8 +329,16 @@ const BusinessSelectExample = () => {
   );
 };
 
-render(<FilterFieldsExample />);
-render(<Divider />);
-render(<SuperSelectExample />);
-render(<Divider />);
-render(<BusinessSelectExample />);
+const FilterFieldsDemo = () => (
+  <Flex vertical>
+    <FilterFieldsExample />
+    <Divider />
+    <SuperSelectExample />
+    <Divider />
+    <SuperSelectVariantsExample />
+    <Divider />
+    <BusinessSelectExample />
+  </Flex>
+);
+
+render(<FilterFieldsDemo />);

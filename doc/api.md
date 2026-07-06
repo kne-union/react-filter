@@ -149,11 +149,12 @@ import { PopoverItem } from '@kne/react-filter';
 
 | 属性        | 类型           | 默认值   | 说明           |
 | ----------- | -------------- | -------- | -------------- |
-| list        | `Array<Array>` | `[]`     | 筛选项配置数组 |
-| displayLine | `number`       | `1`      | 默认展示行数   |
-| label       | `string`       | `'筛选'` | 标题           |
-| extra       | `ReactNode`    | -        | 额外操作区域   |
-| className   | `string`       | -        | 自定义类名     |
+| list                 | `Array`                  | `[]`      | 筛选项配置数组，默认支持单层数组，也兼容双层数组 |
+| displayLine          | `number`                 | `1`       | 双层数组模式下默认展示行数 |
+| visibleCountStrategy | `'asc' \| 'desc'`        | `'asc'`   | 单层数组模式下可见项计算策略，`asc` 从少往多累加，`desc` 从多往少递减 |
+| label                | `string`                 | `'筛选'`  | 标题 |
+| extra                | `ReactNode`              | -         | 额外操作区域 |
+| className            | `string`                 | -         | 自定义类名 |
 
 ---
 
@@ -293,6 +294,55 @@ import { SuperSelectFilterItem } from '@kne/react-filter';
   ]}
 />
 ```
+
+> 注意：需要安装 `@kne/super-select` 依赖。
+
+#### SelectTableListFilterItem 表格选择器筛选
+
+基于 `@kne/super-select` 的 `SelectTableList` 组件，适用于需要展示多列数据的筛选场景。
+
+| 属性      | 类型       | 默认值  | 说明         |
+| --------- | ---------- | ------- | ------------ |
+| name      | `string`   | -       | 字段名称     |
+| label     | `string`   | -       | 标签         |
+| options   | `Array`    | -       | 选项数据     |
+| columns   | `Array`    | -       | 表格列配置   |
+| valueKey  | `string`   | `'id'`  | 值字段名     |
+| labelKey  | `string`   | `'name'`| 标签字段名   |
+| single    | `boolean`  | `false` | 是否单选     |
+| maxLength | `number`   | -       | 最多可选数量 |
+
+> 注意：需要安装 `@kne/super-select` 依赖。
+
+#### SelectTreeFilterItem 树形选择器筛选
+
+基于 `@kne/super-select` 的 `SelectTree` 组件，适用于组织架构、分类等层级数据筛选。
+
+| 属性      | 类型       | 默认值  | 说明         |
+| --------- | ---------- | ------- | ------------ |
+| name      | `string`   | -       | 字段名称     |
+| label     | `string`   | -       | 标签         |
+| options   | `Array`    | -       | 树形数据（含 `parentId`） |
+| valueKey  | `string`   | `'id'`  | 值字段名     |
+| labelKey  | `string`   | `'name'`| 标签字段名   |
+| single    | `boolean`  | `false` | 是否单选     |
+| maxLength | `number`   | -       | 最多可选数量 |
+
+> 注意：需要安装 `@kne/super-select` 依赖。
+
+#### SelectCascaderFilterItem 级联选择器筛选
+
+基于 `@kne/super-select` 的 `SelectCascader` 组件，支持多列菜单展示、父子关联选择、搜索过滤。
+
+| 属性      | 类型       | 默认值  | 说明         |
+| --------- | ---------- | ------- | ------------ |
+| name      | `string`   | -       | 字段名称     |
+| label     | `string`   | -       | 标签         |
+| options   | `Array`    | -       | 级联数据（含 `children`） |
+| valueKey  | `string`   | `'id'`  | 值字段名     |
+| labelKey  | `string`   | `'name'`| 标签字段名   |
+| single    | `boolean`  | `false` | 是否单选     |
+| maxLength | `number`   | -       | 最多可选数量 |
 
 > 注意：需要安装 `@kne/super-select` 依赖。
 
