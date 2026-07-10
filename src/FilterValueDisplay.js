@@ -5,13 +5,13 @@ import { useIntl } from '@kne/react-intl';
 import withLocale from './withLocale';
 import { useState } from 'react';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import useMobile from './hooks/useMobile';
+import useFilterIsMobile from './hooks/useFilterIsMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 
-const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChange }) => {
+const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChange, className, hideLabel, flush }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
   const [isExpand, setIsExpand] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useFilterIsMobile();
   const { scrollRef, isOverflow, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({
     enabled: isMobile,
     suspend: isExpand,
@@ -39,8 +39,21 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
   });
 
   return (
-    <Space className={classnames(style['filter-title'], style['filter-value-display'])} align="top" size={16}>
-      <span className={style['filter-label']}>{formatMessage({ id: 'selectedText' })}</span>
+    <Space
+      className={classnames(
+        style['filter-title'],
+        style['filter-value-display'],
+        'filter-value-display-root',
+        {
+          [style['is-hide-label']]: hideLabel,
+          [style['is-flush']]: flush
+        },
+        className
+      )}
+      align="top"
+      size={hideLabel ? 0 : 16}
+    >
+      {hideLabel ? null : <span className={style['filter-label']}>{formatMessage({ id: 'selectedText' })}</span>}
       {isMobile ? (
         <div className={classnames(style['filter-value-display-content'], !isOverflow && style['is-not-overflow'])}>
           <div className={classnames(style['filter-value-tags-wrap'], isExpand && style['is-expand'])}>

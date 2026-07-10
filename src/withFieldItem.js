@@ -1,8 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { usePopupContainer, useScrollElement } from '@kne/responsive-utils';
+import useMobileFixedMode from './hooks/useMobileFixedMode';
 import FilterItem from './FilterItem';
 import style from './style.module.scss';
 import classnames from 'classnames';
+import useResponsiveScrollListener from './hooks/useResponsiveScrollListener';
+import { getMobilePopupMetrics } from './utils/getMobilePopupMetrics';
+import { MOBILE_MASK_Z_INDEX, MOBILE_POPUP_Z_INDEX } from './constants/mobilePopup';
 
 const isNotEmpty = value => {
   if (value === null || value === undefined) return false;
@@ -18,11 +23,33 @@ const withFieldItem =
   (WrappedComponent, options = {}) =>
   ({ value, onChange, interceptor, label, render, ...props }) => {
     const [open, setOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const { isMobile, useBoundaryMount } = useMobileFixedMode();
+    const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
     const [renderMask, setRenderMask] = useState(false);
     const [maskClosing, setMaskClosing] = useState(false);
     const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
     const triggerRef = useRef(null);
+    const getBoundaryElement = usePopupContainer();
+    const getScrollElement = useScrollElement();
+    const resolveGetPopupContainer = useCallback(
+      triggerNode => {
+        if (typeof props.getPopupContainer === 'function') {
+          const customContainer = props.getPopupContainer(triggerNode);
+          if (customContainer) {
+            return customContainer;
+          }
+        }
+        if (!isMobile) {
+          return getBoundaryElement();
+        }
+        if (useBoundaryMount) {
+          return getBoundaryElement();
+        }
+        return typeof document !== 'undefined' ? document.body : null;
+      },
+      [getBoundaryElement, isMobile, props.getPopupContainer, useBoundaryMount]
+    );
+    const popupMountNode = typeof document !== 'undefined' ? (isMobile ? (useBoundaryMount ? getBoundaryElement() || document.body : document.body) : getBoundaryElement() || document.body) : null;
     const setMobilePopupVariables = useCallback(metrics => {
       if (typeof document === 'undefined') return;
       document.body.style.setProperty('--react-filter-field-mobile-height', `${metrics.height}px`);
@@ -31,39 +58,17 @@ const withFieldItem =
     }, []);
     const updatePopupMetrics = useCallback(() => {
       if (typeof window === 'undefined' || !triggerRef.current) return;
-      const rect = triggerRef.current.getBoundingClientRect();
-      const top = Math.max(rect.bottom + MOBILE_POPUP_OFFSET, 0);
-      const metrics = {
-        top,
-        height: Math.max(window.innerHeight - top, 0)
-      };
+      const metrics = getMobilePopupMetrics(triggerRef.current, {
+        scrollEl: getScrollElement(),
+        boundaryEl: getBoundaryElement(),
+        useBoundaryMount,
+        offset: MOBILE_POPUP_OFFSET
+      });
       setPopupMetrics(metrics);
       setMobilePopupVariables(metrics);
-    }, [setMobilePopupVariables]);
+    }, [getBoundaryElement, getScrollElement, setMobilePopupVariables, useBoundaryMount]);
 
-    useEffect(() => {
-      if (typeof window === 'undefined') return;
-      const mediaQuery = window.matchMedia('(max-width: 768px)');
-      const updateIsMobile = () => {
-        setIsMobile(mediaQuery.matches);
-      };
-      updateIsMobile();
-      mediaQuery.addEventListener ? mediaQuery.addEventListener('change', updateIsMobile) : mediaQuery.addListener(updateIsMobile);
-      return () => {
-        mediaQuery.removeEventListener ? mediaQuery.removeEventListener('change', updateIsMobile) : mediaQuery.removeListener(updateIsMobile);
-      };
-    }, []);
-
-    useEffect(() => {
-      if (!open || !isMobile) return;
-      updatePopupMetrics();
-      window.addEventListener('resize', updatePopupMetrics);
-      window.addEventListener('scroll', updatePopupMetrics, true);
-      return () => {
-        window.removeEventListener('resize', updatePopupMetrics);
-        window.removeEventListener('scroll', updatePopupMetrics, true);
-      };
-    }, [isMobile, open, updatePopupMetrics]);
+    useResponsiveScrollListener(updatePopupMetrics, open && isMobile);
 
     useEffect(() => {
       if (typeof document === 'undefined' || !isMobile || popupMetrics.height <= 0) return;
@@ -117,7 +122,8 @@ const withFieldItem =
           '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
           '--react-filter-field-mobile-top': `${popupMetrics.top}px`,
           top: popupMetrics.top,
-          left: 0
+          left: popupMetrics.left ?? 0,
+          zIndex: MOBILE_POPUP_Z_INDEX
         }
       : undefined;
 
@@ -125,7 +131,7 @@ const withFieldItem =
       if (!isMobile) return classNames;
       return Object.assign({}, classNames, {
         popup: Object.assign({}, classNames?.popup, {
-          root: classnames(classNames?.popup?.root, style['field-item-mobile-popup'], FIELD_MOBILE_POPUP_CLASS)
+          root: classnames(classNames?.popup?.root, style['field-item-mobile-popup'], FIELD_MOBILE_POPUP_CLASS, fixedModeClass)
         })
       });
     };
@@ -152,9 +158,10 @@ const withFieldItem =
           valueType="all"
           onOpenChange={handleOpenChange}
           onDropdownVisibleChange={handleOpenChange}
-          popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
-          dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
-          overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS)}
+          getPopupContainer={resolveGetPopupContainer}
+          popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
+          dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
+          overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
           overlayStyle={Object.assign({}, props.overlayStyle, mobilePopupStyle)}
           popupStyle={Object.assign({}, props.popupStyle, mobilePopupStyle)}
           dropdownStyle={Object.assign({}, props.dropdownStyle, mobilePopupStyle)}
@@ -164,27 +171,39 @@ const withFieldItem =
           autoAdjustOverflow={isMobile ? false : props.autoAdjustOverflow}
           align={isMobile ? { offset: [0, 0] } : props.align}
           isPopup={options.forcePopup ? true : props.isPopup}
-          overlayWidth={isMobile && options.forcePopup ? (typeof window === 'undefined' ? props.overlayWidth : window.innerWidth) : props.overlayWidth}
+          zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : props.zIndex}
+          overlayWidth={
+            isMobile && options.forcePopup
+              ? typeof window === 'undefined'
+                ? props.overlayWidth
+                : getMobilePopupMetrics(triggerRef.current, {
+                    scrollEl: getScrollElement(),
+                    boundaryEl: getBoundaryElement(),
+                    useBoundaryMount
+                  }).width || window.innerWidth
+              : props.overlayWidth
+          }
         />
       );
     };
     return (
       <>
         {renderMask &&
-          typeof document !== 'undefined' &&
+          popupMountNode &&
           createPortal(
             <div
-              className={classnames(style['pop-util-mask'], maskClosing && style['pop-util-mask-leave'])}
+              className={classnames(style['pop-util-mask'], maskClosing && style['pop-util-mask-leave'], fixedModeClass)}
               style={{
                 top: popupMetrics.top,
-                height: popupMetrics.height
+                height: popupMetrics.height,
+                zIndex: MOBILE_MASK_Z_INDEX
               }}
               onClick={closeFieldItem}
               onTouchMove={e => {
                 e.preventDefault();
               }}
             />,
-            document.body
+            popupMountNode
           )}
         <span ref={triggerRef}>
           <FilterItem label={label} open={open} active={isNotEmpty(value)}>

@@ -1,11 +1,16 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { usePopupContainer, useScrollElement } from '@kne/responsive-utils';
+import useMobileFixedMode from './hooks/useMobileFixedMode';
 import { Button, Col, Dropdown, Row } from 'antd';
 import FilterItem from './FilterItem';
 import classnames from 'classnames';
 import { useIntl } from '@kne/react-intl';
 import withLocale from './withLocale';
 import style from './style.module.scss';
+import useResponsiveScrollListener from './hooks/useResponsiveScrollListener';
+import { getMobilePopupMetrics } from './utils/getMobilePopupMetrics';
+import { MOBILE_MASK_Z_INDEX, MOBILE_POPUP_Z_INDEX } from './constants/mobilePopup';
 
 const isNotEmpty = value => {
   if (value === null || value === undefined) return false;
@@ -17,10 +22,32 @@ const isNotEmpty = value => {
 const MASK_ANIMATION_DURATION = 180;
 const MOBILE_POPUP_OFFSET = 4;
 
-const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, placement = 'bottomLeft', onOpenChange, onChange, children }) => {
+const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, placement = 'bottomLeft', onOpenChange, onChange, getPopupContainer: customGetPopupContainer, children }) => {
   const [state, setState] = useState(value);
   const [open, setOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile, useBoundaryMount } = useMobileFixedMode();
+  const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
+  const getBoundaryElement = usePopupContainer();
+  const getScrollElement = useScrollElement();
+  const resolveGetPopupContainer = useCallback(
+    triggerNode => {
+      if (typeof customGetPopupContainer === 'function') {
+        const customContainer = customGetPopupContainer(triggerNode);
+        if (customContainer) {
+          return customContainer;
+        }
+      }
+      if (!isMobile) {
+        return getBoundaryElement();
+      }
+      if (useBoundaryMount) {
+        return getBoundaryElement();
+      }
+      return typeof document !== 'undefined' ? document.body : null;
+    },
+    [customGetPopupContainer, getBoundaryElement, isMobile, useBoundaryMount]
+  );
+  const popupMountNode = typeof document !== 'undefined' ? (isMobile ? (useBoundaryMount ? getBoundaryElement() || document.body : document.body) : getBoundaryElement() || document.body) : null;
   const [renderMask, setRenderMask] = useState(false);
   const [maskClosing, setMaskClosing] = useState(false);
   const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
@@ -31,39 +58,18 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
 
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const updateIsMobile = () => {
-      setIsMobile(mediaQuery.matches);
-    };
-    updateIsMobile();
-    mediaQuery.addEventListener ? mediaQuery.addEventListener('change', updateIsMobile) : mediaQuery.addListener(updateIsMobile);
-    return () => {
-      mediaQuery.removeEventListener ? mediaQuery.removeEventListener('change', updateIsMobile) : mediaQuery.removeListener(updateIsMobile);
-    };
-  }, []);
-
   const updatePopupMetrics = useCallback(() => {
     if (typeof window === 'undefined' || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    const top = Math.max(rect.bottom + MOBILE_POPUP_OFFSET, 0);
-    setPopupMetrics({
-      top,
-      height: Math.max(window.innerHeight - top, 0)
+    const metrics = getMobilePopupMetrics(triggerRef.current, {
+      scrollEl: getScrollElement(),
+      boundaryEl: getBoundaryElement(),
+      useBoundaryMount,
+      offset: MOBILE_POPUP_OFFSET
     });
-  }, []);
+    setPopupMetrics(metrics);
+  }, [getBoundaryElement, getScrollElement, useBoundaryMount]);
 
-  useEffect(() => {
-    if (!open || !isMobile) return;
-    updatePopupMetrics();
-    window.addEventListener('resize', updatePopupMetrics);
-    window.addEventListener('scroll', updatePopupMetrics, true);
-    return () => {
-      window.removeEventListener('resize', updatePopupMetrics);
-      window.removeEventListener('scroll', updatePopupMetrics, true);
-    };
-  }, [isMobile, open, updatePopupMetrics]);
+  useResponsiveScrollListener(updatePopupMetrics, open && isMobile);
 
   useEffect(() => {
     if (open && isMobile) {
@@ -104,7 +110,8 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
     ? {
         '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
         top: popupMetrics.top,
-        left: 0
+        left: popupMetrics.left ?? 0,
+        zIndex: MOBILE_POPUP_Z_INDEX
       }
     : undefined;
 
@@ -142,20 +149,21 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
   return (
     <>
       {renderMask &&
-        typeof document !== 'undefined' &&
+        popupMountNode &&
         createPortal(
           <div
-            className={classnames(style['pop-util-mask'], maskClosing && style['pop-util-mask-leave'])}
+            className={classnames(style['pop-util-mask'], maskClosing && style['pop-util-mask-leave'], fixedModeClass)}
             style={{
               top: popupMetrics.top,
-              height: popupMetrics.height
+              height: popupMetrics.height,
+              zIndex: MOBILE_MASK_Z_INDEX
             }}
             onClick={closeDropdown}
             onTouchMove={e => {
               e.preventDefault();
             }}
           />,
-          document.body
+          popupMountNode
         )}
       <Dropdown
         open={open}
@@ -163,7 +171,9 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
         placement={isMobile ? 'bottomLeft' : placement}
         autoAdjustOverflow={!isMobile}
         align={isMobile ? { offset: [0, 0] } : undefined}
-        overlayClassName={classnames(style['pop-util-overlay'], overlayClassName)}
+        getPopupContainer={resolveGetPopupContainer}
+        zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : undefined}
+        overlayClassName={classnames(style['pop-util-overlay'], overlayClassName, isMobile && fixedModeClass)}
         overlayStyle={mobileOverlayStyle}
         onOpenChange={handleOpenChange}
         menu={{ items: [{ key: 'content', label: null }] }}

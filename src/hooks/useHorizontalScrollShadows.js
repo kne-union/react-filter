@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import useResponsiveScrollListener from './useResponsiveScrollListener';
 
 const useHorizontalScrollShadows = ({ enabled, suspend = false, preserveOverflowOnSuspend = false, refreshKey } = {}) => {
   const scrollRef = useRef(null);
@@ -38,14 +39,14 @@ const useHorizontalScrollShadows = ({ enabled, suspend = false, preserveOverflow
 
     update();
     el.addEventListener('scroll', update);
-    window.addEventListener('resize', update);
     const rafId = window.requestAnimationFrame(update);
     return () => {
       el.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
       window.cancelAnimationFrame(rafId);
     };
   }, [enabled, refreshKey, suspend, update]);
+
+  useResponsiveScrollListener(update, enabled && !suspend);
 
   return { scrollRef, isOverflow, showScrollPrev, showScrollNext, updateScrollShadowVisible: update };
 };

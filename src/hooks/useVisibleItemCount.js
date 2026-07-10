@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import useResponsiveScrollListener from './useResponsiveScrollListener';
 
 const GAP = 8;
 const SAFETY_GAP = 2;
@@ -155,17 +156,17 @@ const useVisibleItemCount = ({ items, enabled, strategy = 'asc' }) => {
 
     lastWidthRef.current = containerEl.clientWidth;
     observer.observe(containerEl);
-    window.addEventListener('resize', scheduleCalculate);
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('resize', scheduleCalculate);
       if (rafRef.current) {
         window.cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
     };
   }, [containerEl, enabled, scheduleCalculate]);
+
+  useResponsiveScrollListener(scheduleCalculate, enabled && !!containerEl);
 
   return { setContainerRef, setMeasureRef, setMoreMeasureRef, visibleCount };
 };

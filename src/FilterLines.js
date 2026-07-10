@@ -5,7 +5,7 @@ import { Col, Row, Space } from 'antd';
 import { useIntl } from '@kne/react-intl';
 import { useContext } from './context';
 import get from 'lodash/get';
-import useMobile from './hooks/useMobile';
+import useFilterIsMobile from './hooks/useFilterIsMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 import useVisibleItemCount from './hooks/useVisibleItemCount';
 import { getMobileFilterList, normalizeFilterList } from './normalizeFilterList';
@@ -92,7 +92,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   const mobileList = useMemo(() => getMobileFilterList(list), [list]);
   const isFlatMode = mode === 'flat';
   const [isExpand, setIsExpand] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useFilterIsMobile();
   const { scrollRef, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({ enabled: isMobile, refreshKey: list });
   const { setContainerRef, setMeasureRef, setMoreMeasureRef, visibleCount } = useVisibleItemCount({
     items: flatItems,
