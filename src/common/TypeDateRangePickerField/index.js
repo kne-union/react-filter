@@ -1,12 +1,22 @@
 import { DatePicker, Select, Space, Flex } from 'antd';
 import { useIntl } from '@kne/react-intl';
+import { usePopupContainer } from '@kne/responsive-utils';
 import { useRef, useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import style from './style.module.scss';
+import useMobileFixedMode from '../../hooks/useMobileFixedMode';
+import { MOBILE_POPUP_Z_INDEX } from '../../constants/mobilePopup';
+
+const FIELD_MOBILE_POPUP_CLASS = 'react-filter-field-mobile-popup';
 
 const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, defaultValue, shortcuts = true, shortcutOptions, ...props }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
+  const getPopupContainer = usePopupContainer();
+  const { isMobile, useBoundaryMount } = useMobileFixedMode();
+  const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
+  const nestedPopupClassName = classnames(style['field-item-mobile-popup'], FIELD_MOBILE_POPUP_CLASS, fixedModeClass);
+  const nestedPopupStyle = isMobile ? { zIndex: MOBILE_POPUP_Z_INDEX } : undefined;
 
   const typeList = new Map([
     ['date', formatMessage({ id: 'customTime' })],
@@ -111,6 +121,11 @@ const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, de
       <Space.Compact>
         <Select
           style={{ width: '120px' }}
+          getPopupContainer={getPopupContainer}
+          popupClassName={isMobile ? nestedPopupClassName : undefined}
+          classNames={isMobile ? { popup: { root: nestedPopupClassName } } : undefined}
+          popupStyle={nestedPopupStyle}
+          styles={isMobile ? { popup: { root: nestedPopupStyle } } : undefined}
           value={value?.type || 'date'}
           onChange={typeValue => {
             onChange(currentValue => {
@@ -132,6 +147,30 @@ const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, de
         />
         <DatePicker.RangePicker
           {...props}
+          getPopupContainer={getPopupContainer}
+          classNames={
+            isMobile
+              ? {
+                  ...props.classNames,
+                  popup: {
+                    ...props.classNames?.popup,
+                    root: classnames(props.classNames?.popup?.root, nestedPopupClassName)
+                  }
+                }
+              : props.classNames
+          }
+          styles={
+            isMobile
+              ? {
+                  ...props.styles,
+                  popup: {
+                    ...props.styles?.popup,
+                    root: Object.assign({}, props.styles?.popup?.root, nestedPopupStyle)
+                  }
+                }
+              : props.styles
+          }
+          popupStyle={nestedPopupStyle}
           picker={value?.type || 'date'}
           value={Array.isArray(value?.value) && value.value.length === 2 ? value.value.map(item => item && dayjs(item)) : null}
           onChange={dateValue => {

@@ -1,5 +1,6 @@
 import { App, Tag, Space } from 'antd';
 import { SelectAddress, createAddressApi } from '@kne/super-select-plus';
+import { usePopupContainer } from '@kne/responsive-utils';
 import '@kne/super-select-plus/dist/index.css';
 import { useIntl } from '@kne/react-intl';
 import { useMemo, useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ const getLabelForLocal = (item, locale) => {
 
 const CityFilterItemInner = ({ value, onChange, single = false, maxLength = 5, ...props }) => {
   const { message } = App.useApp();
+  const getPopupContainer = usePopupContainer();
   const { locale } = useIntl();
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
   const [addressApi, setAddressApi] = useState(null);
@@ -77,6 +79,7 @@ const CityFilterItemInner = ({ value, onChange, single = false, maxLength = 5, .
         {formatMessage({ id: 'otherText' })}
         <SelectAddress
           {...props}
+          getPopupContainer={getPopupContainer}
           className={style['filter-advanced-item-other-inner']}
           maxLength={maxLength}
           allowClear={false}
