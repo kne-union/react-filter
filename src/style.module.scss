@@ -457,6 +457,66 @@
       box-shadow: none;
     }
   }
+
+  // 移动端弹层会 portal 到 Filter 外，不能依赖 .filter.is-mobile 嵌套选择器
+  &.is-viewport,
+  &.is-boundary {
+    left: 0 !important;
+    right: auto !important;
+    width: var(--kne-viewport-width, 100vw) !important;
+    max-width: var(--kne-viewport-width, 100vw) !important;
+    min-width: var(--kne-viewport-width, 100vw) !important;
+    max-height: var(--react-filter-popover-mobile-height, 100vh);
+    overflow: hidden;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    z-index: 1050 !important;
+
+    :global {
+      .ant-dropdown-menu {
+        padding: 0;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+    }
+
+    .pop-util-body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-height: var(--react-filter-popover-mobile-height, 100vh);
+      min-height: 0;
+      overflow: hidden;
+      background: #fff;
+      border-radius: 0 0 var(--radius-default, 2px) var(--radius-default, 2px) !important;
+      box-shadow: none;
+    }
+
+    .pop-util-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .pop-util-footer {
+      flex: 0 0 auto;
+
+      :global(.ant-btn) {
+        height: 32px;
+        padding: 0 16px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  &.is-viewport {
+    position: fixed !important;
+  }
+
+  &.is-boundary {
+    position: absolute !important;
+  }
 }
 
 .pop-util-mask {
@@ -1048,53 +1108,6 @@
 
       .filter-item-icon {
         transform: rotate(180deg) scale(0.5);
-      }
-    }
-  }
-
-  .pop-util-overlay {
-    left: 0 !important;
-    right: auto !important;
-    width: var(--kne-viewport-width, 100vw);
-    max-width: var(--kne-viewport-width, 100vw);
-    max-height: var(--react-filter-popover-mobile-height, 100vh);
-    overflow: hidden;
-    z-index: 1050 !important;
-
-    &.is-viewport {
-      position: fixed !important;
-    }
-
-    &.is-boundary {
-      position: absolute !important;
-    }
-
-    .pop-util-body {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-height: var(--react-filter-popover-mobile-height, 100vh);
-      min-height: 0;
-      overflow: hidden;
-      background: #fff;
-      border-radius: 0 0 var(--radius-default, 2px) var(--radius-default, 2px) !important;
-      box-shadow: none;
-    }
-
-    .pop-util-content {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .pop-util-footer {
-      flex: 0 0 auto;
-
-      :global(.ant-btn) {
-        height: 32px;
-        padding: 0 16px;
-        font-size: 14px;
       }
     }
   }

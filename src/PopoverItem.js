@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { usePopupContainer, useScrollElement } from '@kne/responsive-utils';
-import useMobileFixedMode from './hooks/useMobileFixedMode';
+import { useScrollElement } from '@kne/responsive-utils';
+import useFilterPopupContainer from './hooks/useFilterPopupContainer';
 import { Button, Col, Dropdown, Row } from 'antd';
 import FilterItem from './FilterItem';
 import classnames from 'classnames';
@@ -25,9 +25,8 @@ const MOBILE_POPUP_OFFSET = 4;
 const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, placement = 'bottomLeft', onOpenChange, onChange, getPopupContainer: customGetPopupContainer, children }) => {
   const [state, setState] = useState(value);
   const [open, setOpen] = useState(false);
-  const { isMobile, useBoundaryMount } = useMobileFixedMode();
+  const { isMobile, useBoundaryMount, getMountNode, getPopupContainer } = useFilterPopupContainer();
   const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
-  const getBoundaryElement = usePopupContainer();
   const getScrollElement = useScrollElement();
   const resolveGetPopupContainer = useCallback(
     triggerNode => {
@@ -37,21 +36,15 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
           return customContainer;
         }
       }
-      if (!isMobile) {
-        return getBoundaryElement();
-      }
-      if (useBoundaryMount) {
-        return getBoundaryElement();
-      }
-      return typeof document !== 'undefined' ? document.body : null;
+      return getPopupContainer(triggerNode);
     },
-    [customGetPopupContainer, getBoundaryElement, isMobile, useBoundaryMount]
+    [customGetPopupContainer, getPopupContainer]
   );
-  const popupMountNode = typeof document !== 'undefined' ? (isMobile ? (useBoundaryMount ? getBoundaryElement() || document.body : document.body) : getBoundaryElement() || document.body) : null;
   const [renderMask, setRenderMask] = useState(false);
   const [maskClosing, setMaskClosing] = useState(false);
   const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
   const triggerRef = useRef(null);
+  const popupMountNode = typeof document !== 'undefined' ? getMountNode() || document.body : null;
   const disabled = useMemo(() => {
     return onValidate && !onValidate(state);
   }, [onValidate, state]);
@@ -62,12 +55,12 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
     if (typeof window === 'undefined' || !triggerRef.current) return;
     const metrics = getMobilePopupMetrics(triggerRef.current, {
       scrollEl: getScrollElement(),
-      boundaryEl: getBoundaryElement(),
+      boundaryEl: getMountNode(),
       useBoundaryMount,
       offset: MOBILE_POPUP_OFFSET
     });
     setPopupMetrics(metrics);
-  }, [getBoundaryElement, getScrollElement, useBoundaryMount]);
+  }, [getMountNode, getScrollElement, useBoundaryMount]);
 
   useResponsiveScrollListener(updatePopupMetrics, open && isMobile);
 
