@@ -311,6 +311,7 @@
   flex: 0 0 auto;
 }
 
+.filter-scroll-prev,
 .filter-scroll-next {
   display: none;
 }
@@ -1007,6 +1008,7 @@
   }
 
   .filter-list-scroll-wrap {
+    padding-left: 18px;
     padding-right: 18px;
     overflow: hidden;
   }
@@ -1018,7 +1020,7 @@
     gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-padding-inline: 8px 36px;
+    scroll-padding-inline: 36px 36px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 
@@ -1051,38 +1053,68 @@
     pointer-events: none;
   }
 
+  .filter-scroll-prev,
   .filter-scroll-next {
     position: absolute;
-    top: 50%;
-    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     width: 10px;
-    height: 100%;
+    height: auto;
+    margin: 0;
     padding: 0;
     border: 0;
     color: var(--font-color-grey, #666);
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 55%);
-    transform: translateY(-50%);
+    line-height: 1;
     cursor: pointer;
+  }
+
+  .filter-scroll-prev {
+    left: 0;
+    justify-content: flex-start;
+    background: linear-gradient(270deg, rgba(255, 255, 255, 0), #fff 55%);
 
     &::before {
       content: '';
       position: absolute;
       top: 0;
+      bottom: 0;
+      right: -24px;
+      width: 24px;
+      background: linear-gradient(270deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92));
+      pointer-events: none;
+    }
+  }
+
+  .filter-scroll-next {
+    right: 0;
+    justify-content: flex-end;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 55%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
       left: -24px;
       width: 24px;
-      height: 100%;
       background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92));
       pointer-events: none;
     }
   }
 
+  .filter-scroll-prev-icon,
   .filter-scroll-next-icon {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
     font-size: 24px;
     line-height: 1;
+    // ‹ › 字形视觉重心偏下，上移对齐筛选项中线
+    transform: translateY(-2px);
   }
 
   .filter-item-wrap {
