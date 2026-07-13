@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { usePopupContainer, useScrollElement } from '@kne/responsive-utils';
-import useMobileFixedMode from './hooks/useMobileFixedMode';
+import { useScrollElement } from '@kne/responsive-utils';
+import useFilterPopupContainer from './hooks/useFilterPopupContainer';
 import FilterItem from './FilterItem';
 import style from './style.module.scss';
 import classnames from 'classnames';
@@ -23,13 +23,12 @@ const withFieldItem =
   (WrappedComponent, options = {}) =>
   ({ value, onChange, interceptor, label, render, ...props }) => {
     const [open, setOpen] = useState(false);
-    const { isMobile, useBoundaryMount } = useMobileFixedMode();
+    const { isMobile, useBoundaryMount, getMountNode, getPopupContainer } = useFilterPopupContainer();
     const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
     const [renderMask, setRenderMask] = useState(false);
     const [maskClosing, setMaskClosing] = useState(false);
     const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
     const triggerRef = useRef(null);
-    const getBoundaryElement = usePopupContainer();
     const getScrollElement = useScrollElement();
     const resolveGetPopupContainer = useCallback(
       triggerNode => {
@@ -39,17 +38,11 @@ const withFieldItem =
             return customContainer;
           }
         }
-        if (!isMobile) {
-          return getBoundaryElement();
-        }
-        if (useBoundaryMount) {
-          return getBoundaryElement();
-        }
-        return typeof document !== 'undefined' ? document.body : null;
+        return getPopupContainer(triggerNode);
       },
-      [getBoundaryElement, isMobile, props.getPopupContainer, useBoundaryMount]
+      [getPopupContainer, props.getPopupContainer]
     );
-    const popupMountNode = typeof document !== 'undefined' ? (isMobile ? (useBoundaryMount ? getBoundaryElement() || document.body : document.body) : getBoundaryElement() || document.body) : null;
+    const popupMountNode = typeof document !== 'undefined' ? getMountNode() || document.body : null;
     const setMobilePopupVariables = useCallback(metrics => {
       if (typeof document === 'undefined') return;
       document.body.style.setProperty('--react-filter-field-mobile-height', `${metrics.height}px`);
@@ -60,13 +53,13 @@ const withFieldItem =
       if (typeof window === 'undefined' || !triggerRef.current) return;
       const metrics = getMobilePopupMetrics(triggerRef.current, {
         scrollEl: getScrollElement(),
-        boundaryEl: getBoundaryElement(),
+        boundaryEl: getMountNode(),
         useBoundaryMount,
         offset: MOBILE_POPUP_OFFSET
       });
       setPopupMetrics(metrics);
       setMobilePopupVariables(metrics);
-    }, [getBoundaryElement, getScrollElement, setMobilePopupVariables, useBoundaryMount]);
+    }, [getMountNode, getScrollElement, setMobilePopupVariables, useBoundaryMount]);
 
     useResponsiveScrollListener(updatePopupMetrics, open && isMobile);
 
@@ -178,7 +171,7 @@ const withFieldItem =
                 ? props.overlayWidth
                 : getMobilePopupMetrics(triggerRef.current, {
                     scrollEl: getScrollElement(),
-                    boundaryEl: getBoundaryElement(),
+                    boundaryEl: getMountNode(),
                     useBoundaryMount
                   }).width || window.innerWidth
               : props.overlayWidth

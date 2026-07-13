@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import { RESPONSIVE_BOUNDARY_CLASS } from '@kne/responsive-utils';
 import style from './style.module.scss';
 import FilterProvider from './FilterProvider';
 import useFilterIsMobile from './hooks/useFilterIsMobile';
@@ -12,7 +11,7 @@ const FilterOuter = ({ children, className, ...props }) => {
   return (
     <FilterProvider {...props}>
       {context => (
-        <div ref={boundaryRef} className={classnames(style['filter'], 'filter', RESPONSIVE_BOUNDARY_CLASS, isMobile && style['is-mobile'], className)}>
+        <div ref={boundaryRef} className={classnames(style['filter'], 'filter', isMobile && style['is-mobile'], className)}>
           {children({ ...context, props })}
         </div>
       )}

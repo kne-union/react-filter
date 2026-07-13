@@ -1,19 +1,17 @@
 import { DatePicker, Select, Space, Flex } from 'antd';
 import { useIntl } from '@kne/react-intl';
-import { usePopupContainer } from '@kne/responsive-utils';
 import { useRef, useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import style from './style.module.scss';
-import useMobileFixedMode from '../../hooks/useMobileFixedMode';
+import useFilterPopupContainer from '../../hooks/useFilterPopupContainer';
 import { MOBILE_POPUP_Z_INDEX } from '../../constants/mobilePopup';
 
 const FIELD_MOBILE_POPUP_CLASS = 'react-filter-field-mobile-popup';
 
 const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, defaultValue, shortcuts = true, shortcutOptions, ...props }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
-  const getPopupContainer = usePopupContainer();
-  const { isMobile, useBoundaryMount } = useMobileFixedMode();
+  const { isMobile, useBoundaryMount, getPopupContainer } = useFilterPopupContainer();
   const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
   const nestedPopupClassName = classnames(style['field-item-mobile-popup'], FIELD_MOBILE_POPUP_CLASS, fixedModeClass);
   const nestedPopupStyle = isMobile ? { zIndex: MOBILE_POPUP_Z_INDEX } : undefined;
