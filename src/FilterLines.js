@@ -138,6 +138,15 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
     });
   }, [scrollRef]);
 
+  const scrollToPrev = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({
+      left: Math.max(el.scrollLeft - el.clientWidth * 0.8, 0),
+      behavior: 'smooth'
+    });
+  }, [scrollRef]);
+
   const scrollItemIntoView = useCallback(
     e => {
       if (!isMobile) return;
@@ -229,7 +238,11 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
                   </div>
                 </div>
               ) : null}
-              {isMobile && showScrollPrev ? <div className={style['filter-scroll-prev-shadow']} /> : null}
+              {isMobile && showScrollPrev ? (
+                <button type="button" className={style['filter-scroll-prev']} onClick={scrollToPrev} aria-label="scroll prev">
+                  <span className={style['filter-scroll-prev-icon']}>‹</span>
+                </button>
+              ) : null}
               <div className={style['filter-list-scroll']} ref={setScrollContainerRef} onClick={scrollItemIntoView}>
                 {isMobile ? mobileList.map((item, index) => <Line key={index} list={[item]} />) : renderDesktopContent()}
               </div>
