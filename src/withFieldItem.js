@@ -23,12 +23,18 @@ const withFieldItem =
   (WrappedComponent, options = {}) =>
   ({ value, onChange, interceptor, label, render, ...props }) => {
     const [open, setOpen] = useState(false);
-    const { isMobile, useBoundaryMount, getMountNode, getPopupContainer } = useFilterPopupContainer();
-    const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
+    const { isMobile, useBoundaryMount, fixedModeClass, getMountNode, getPopupContainer, anchorRef } = useFilterPopupContainer();
     const [renderMask, setRenderMask] = useState(false);
     const [maskClosing, setMaskClosing] = useState(false);
     const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
     const triggerRef = useRef(null);
+    const setTriggerRef = useCallback(
+      node => {
+        triggerRef.current = node;
+        anchorRef(node);
+      },
+      [anchorRef]
+    );
     const getScrollElement = useScrollElement();
     const resolveGetPopupContainer = useCallback(
       triggerNode => {
@@ -199,7 +205,7 @@ const withFieldItem =
             />,
             popupMountNode
           )}
-        <span ref={triggerRef}>
+        <span ref={setTriggerRef}>
           <FilterItem label={label} open={open} active={isNotEmpty(value)}>
             {typeof render === 'function'
               ? render({

@@ -25,8 +25,7 @@ const MOBILE_POPUP_OFFSET = 4;
 const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, placement = 'bottomLeft', onOpenChange, onChange, getPopupContainer: customGetPopupContainer, children }) => {
   const [state, setState] = useState(value);
   const [open, setOpen] = useState(false);
-  const { isMobile, useBoundaryMount, getMountNode, getPopupContainer } = useFilterPopupContainer();
-  const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
+  const { isMobile, useBoundaryMount, fixedModeClass, getMountNode, getPopupContainer, anchorRef } = useFilterPopupContainer();
   const getScrollElement = useScrollElement();
   const resolveGetPopupContainer = useCallback(
     triggerNode => {
@@ -44,6 +43,13 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
   const [maskClosing, setMaskClosing] = useState(false);
   const [popupMetrics, setPopupMetrics] = useState({ top: 0, pageTop: 0, height: 0 });
   const triggerRef = useRef(null);
+  const setTriggerRef = useCallback(
+    node => {
+      triggerRef.current = node;
+      anchorRef(node);
+    },
+    [anchorRef]
+  );
   const popupMountNode = typeof document !== 'undefined' ? getMountNode() || document.body : null;
   const disabled = useMemo(() => {
     return onValidate && !onValidate(state);
@@ -172,7 +178,7 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
         menu={{ items: [{ key: 'content', label: null }] }}
         dropdownRender={() => overlayContent}
       >
-        <span ref={triggerRef}>
+        <span ref={setTriggerRef}>
           <FilterItem open={open} active={isNotEmpty(value)} label={label} />
         </span>
       </Dropdown>
