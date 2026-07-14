@@ -1008,9 +1008,16 @@
   }
 
   .filter-list-scroll-wrap {
-    padding-left: 18px;
     padding-right: 18px;
     overflow: hidden;
+
+    &.has-scroll-prev {
+      padding-left: 18px;
+
+      .filter-list-scroll {
+        scroll-padding-inline: 36px 36px;
+      }
+    }
   }
 
   .filter-list-scroll {
@@ -1020,7 +1027,7 @@
     gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-padding-inline: 36px 36px;
+    scroll-padding-inline: 8px 36px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 

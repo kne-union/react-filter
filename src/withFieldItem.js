@@ -164,6 +164,7 @@ const withFieldItem =
           autoAdjustOverflow={isMobile ? false : props.autoAdjustOverflow}
           align={isMobile ? { offset: [0, 0] } : props.align}
           isPopup={options.forcePopup ? true : props.isPopup}
+          disableMobileSheet={options.forcePopup ? true : props.disableMobileSheet}
           zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : props.zIndex}
           overlayWidth={
             isMobile && options.forcePopup
