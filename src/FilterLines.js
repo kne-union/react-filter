@@ -221,7 +221,8 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
             <div
               ref={setMeasureContainerRef}
               className={classnames(style['filter-list-scroll-wrap'], {
-                [style['filter-list-constrained']]: !isMobile && isFlatMode
+                [style['filter-list-constrained']]: !isMobile && isFlatMode,
+                [style['has-scroll-prev']]: isMobile && showScrollPrev
               })}
             >
               {!isMobile && isFlatMode ? (
