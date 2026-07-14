@@ -11,8 +11,7 @@ const FIELD_MOBILE_POPUP_CLASS = 'react-filter-field-mobile-popup';
 
 const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, defaultValue, shortcuts = true, shortcutOptions, ...props }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
-  const { isMobile, useBoundaryMount, getPopupContainer } = useFilterPopupContainer();
-  const fixedModeClass = useBoundaryMount ? style['is-boundary'] : style['is-viewport'];
+  const { isMobile, fixedModeClass, getPopupContainer } = useFilterPopupContainer();
   const nestedPopupClassName = classnames(style['field-item-mobile-popup'], FIELD_MOBILE_POPUP_CLASS, fixedModeClass);
   const nestedPopupStyle = isMobile ? { zIndex: MOBILE_POPUP_Z_INDEX } : undefined;
 

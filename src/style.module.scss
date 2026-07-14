@@ -460,8 +460,8 @@
   }
 
   // 移动端弹层会 portal 到 Filter 外，不能依赖 .filter.is-mobile 嵌套选择器
-  &.is-viewport,
-  &.is-boundary {
+  &:global(.kne-is-viewport),
+  &:global(.kne-is-boundary) {
     left: 0 !important;
     right: auto !important;
     width: var(--kne-viewport-width, 100vw) !important;
@@ -511,11 +511,11 @@
     }
   }
 
-  &.is-viewport {
+  &:global(.kne-is-viewport) {
     position: fixed !important;
   }
 
-  &.is-boundary {
+  &:global(.kne-is-boundary) {
     position: absolute !important;
   }
 }
@@ -528,11 +528,11 @@
   background: rgba(0, 0, 0, 0.45);
   animation: pop-util-mask-fade-in 180ms ease-out both;
 
-  &.is-viewport {
+  &:global(.kne-is-viewport) {
     position: fixed;
   }
 
-  &.is-boundary {
+  &:global(.kne-is-boundary) {
     position: absolute;
     width: 100%;
   }
@@ -560,11 +560,11 @@
   animation: pop-util-mobile-expand-down 180ms ease-out both;
   z-index: 1050 !important;
 
-  &.is-viewport {
+  &:global(.kne-is-viewport) {
     position: fixed !important;
   }
 
-  &.is-boundary {
+  &:global(.kne-is-boundary) {
     position: absolute !important;
   }
 

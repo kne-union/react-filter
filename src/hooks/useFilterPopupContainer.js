@@ -1,29 +1,29 @@
 import { useCallback } from 'react';
-import { usePopupContainer } from '@kne/responsive-utils';
-import useMobileFixedMode from './useMobileFixedMode';
-import { resolveFilterPopupContainer } from '../utils/resolveFilterPopupContainer';
+import { MOBILE_POPUP_MODE, useMobilePopupMount } from '@kne/responsive-utils';
 
-const useFilterPopupContainer = () => {
-  const getBoundaryElement = usePopupContainer();
-  const { isMobile, useBoundaryMount } = useMobileFixedMode();
+/**
+ * Filter 弹层挂载：cover=viewport（半屏/下拉罩住当前移动可视区）
+ */
+const useFilterPopupContainer = (options = {}) => {
+  const { getPopupContainer: getPopupContainerProp, ...rest } = options;
+  const { isMobile, fixedModeClass, getMountNode, getPopupContainer, resolveMount, anchorRef } = useMobilePopupMount({
+    cover: 'viewport',
+    getPopupContainer: getPopupContainerProp,
+    ...rest
+  });
 
-  const getMountNode = useCallback(
-    () =>
-      resolveFilterPopupContainer({
-        isMobile,
-        useBoundaryMount,
-        getBoundaryElement
-      }),
-    [getBoundaryElement, isMobile, useBoundaryMount]
-  );
+  const useBoundaryMount = !!(isMobile && fixedModeClass === MOBILE_POPUP_MODE.boundary);
 
-  const getPopupContainer = useCallback(() => getMountNode(), [getMountNode]);
+  const getMountNodeSafe = useCallback(triggerNode => getMountNode(triggerNode) || (typeof document !== 'undefined' ? document.body : null), [getMountNode]);
 
   return {
     isMobile,
     useBoundaryMount,
-    getMountNode,
-    getPopupContainer
+    fixedModeClass,
+    getMountNode: getMountNodeSafe,
+    getPopupContainer,
+    resolveMount,
+    anchorRef
   };
 };
 
