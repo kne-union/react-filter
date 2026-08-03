@@ -126,6 +126,27 @@ const withFieldItem =
         }
       : undefined;
 
+    // 勿把 undefined overlayWidth 显式传入（会盖掉 SuperSelect / SelectTableList / 业务选择器内部默认值）。
+    // 窄触发器最小宽度由 @kne/super-select 的 DEFAULT_OVERLAY_MIN_WIDTH / 各业务默认 overlayWidth 处理。
+    const resolvedOverlayWidth = (() => {
+      if (isMobile && options.forcePopup) {
+        if (typeof window === 'undefined') {
+          return props.overlayWidth;
+        }
+        return (
+          getMobilePopupMetrics(triggerRef.current, {
+            scrollEl: getScrollElement(),
+            boundaryEl: getMountNode(),
+            useBoundaryMount
+          }).width || window.innerWidth
+        );
+      }
+      if (props.overlayWidth != null && props.overlayWidth !== '') {
+        return props.overlayWidth;
+      }
+      return undefined;
+    })();
+
     const mergePopupClassNames = classNames => {
       if (!isMobile) return classNames;
       return Object.assign({}, classNames, {
@@ -144,13 +165,16 @@ const withFieldItem =
       });
     };
 
+    const fieldPopupClassName = classnames(isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass);
+
     const renderChildren = otherProps => {
       const inputValue = typeof interceptor?.input === 'function' ? interceptor.input(value) : value;
       const fieldValue = options.forcePopup && inputValue == null ? (props.single ? null : []) : inputValue;
+      const { overlayWidth: _omitOverlayWidth, ...restProps } = props;
       return (
         <WrappedComponent
           allowClear={false}
-          {...Object.assign({}, props, otherProps)}
+          {...Object.assign({}, restProps, otherProps)}
           className={style['filter-item-inner']}
           value={fieldValue}
           onChange={typeof interceptor?.output === 'function' ? (...args) => onChange(interceptor.output(...args)) : onChange}
@@ -158,9 +182,9 @@ const withFieldItem =
           onOpenChange={handleOpenChange}
           onDropdownVisibleChange={handleOpenChange}
           getPopupContainer={resolveGetPopupContainer}
-          popupClassName={classnames(props.popupClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
-          dropdownClassName={classnames(props.dropdownClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
-          overlayClassName={classnames(props.overlayClassName, isMobile && style['field-item-mobile-popup'], isMobile && FIELD_MOBILE_POPUP_CLASS, isMobile && fixedModeClass)}
+          popupClassName={classnames(props.popupClassName, fieldPopupClassName)}
+          dropdownClassName={classnames(props.dropdownClassName, fieldPopupClassName)}
+          overlayClassName={classnames(props.overlayClassName, fieldPopupClassName)}
           overlayStyle={Object.assign({}, props.overlayStyle, mobilePopupStyle)}
           popupStyle={Object.assign({}, props.popupStyle, mobilePopupStyle)}
           dropdownStyle={Object.assign({}, props.dropdownStyle, mobilePopupStyle)}
@@ -172,17 +196,7 @@ const withFieldItem =
           isPopup={options.forcePopup ? true : props.isPopup}
           disableMobileSheet={options.forcePopup ? true : props.disableMobileSheet}
           zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : props.zIndex}
-          overlayWidth={
-            isMobile && options.forcePopup
-              ? typeof window === 'undefined'
-                ? props.overlayWidth
-                : getMobilePopupMetrics(triggerRef.current, {
-                    scrollEl: getScrollElement(),
-                    boundaryEl: getMountNode(),
-                    useBoundaryMount
-                  }).width || window.innerWidth
-              : props.overlayWidth
-          }
+          {...(resolvedOverlayWidth != null ? { overlayWidth: resolvedOverlayWidth } : {})}
         />
       );
     };
