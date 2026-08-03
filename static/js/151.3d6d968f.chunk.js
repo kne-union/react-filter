@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunk_react_filter_2_0_0=self.webpackChunk_react_filter_2_0_0||[]).push([[151],{8151(e,r,t){t.r(r);const a={ReactFilter:t(58872).A};t.d(r,["default",0,a,"manifest",0,{name:"react-filter",version:"2.0.0","open-version":!0,"public-url":"/react-filter",modules:[{name:"react-filter",baseDir:"/home/runner/work/react-filter/react-filter",description:"A React filter component library with multiple filter types, flexible layouts, and searchParams-based filter seeding.",packageName:"@kne/react-filter"}]}])}}]);
+//# sourceMappingURL=151.3d6d968f.chunk.js.map
