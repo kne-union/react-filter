@@ -8,10 +8,9 @@ import FilterProvider from './FilterProvider';
 import FilterOuter from './FilterOuter';
 import pickSelectValues from './pickSelectValues';
 import createFilterValueMapper from './createFilterValueMapper';
-import useUrlFilter, { createUrlParamsReader, stripConsumedUrlParams } from './useUrlFilter';
-import useUrlFilterValue from './useUrlFilterValue';
-import filterToUrlParams, { parseFilterEntry, takeFilterEntry, createUrlFilterReader } from './filterToUrlParams';
+import useSearchParamsValue from './useSearchParamsValue';
 import filterInterceptors, { singleSelectInterceptor, multiSelectInterceptor } from './filterInterceptors';
+import { FILTER_CLASS } from './filterClassNames';
 
 Filter.fields = fields;
 Filter.getFilterValue = getFilterValue;
@@ -23,40 +22,14 @@ Filter.FilterOuter = FilterOuter;
 
 Filter.pickSelectValues = pickSelectValues;
 Filter.createFilterValueMapper = createFilterValueMapper;
-Filter.useUrlFilter = useUrlFilter;
-Filter.useUrlFilterValue = useUrlFilterValue;
-Filter.createUrlParamsReader = createUrlParamsReader;
-Filter.stripConsumedUrlParams = stripConsumedUrlParams;
-Filter.filterToUrlParams = filterToUrlParams;
-Filter.parseFilterEntry = parseFilterEntry;
-Filter.takeFilterEntry = takeFilterEntry;
-Filter.createUrlFilterReader = createUrlFilterReader;
+Filter.useSearchParamsValue = useSearchParamsValue;
 Filter.filterInterceptors = filterInterceptors;
 Filter.singleSelectInterceptor = singleSelectInterceptor;
 Filter.multiSelectInterceptor = multiSelectInterceptor;
+Filter.FILTER_CLASS = FILTER_CLASS;
 
 export default Filter;
-export {
-  fields,
-  getFilterValue,
-  useFilter,
-  withFilterValue,
-  SearchInput,
-  FilterProvider,
-  pickSelectValues,
-  createFilterValueMapper,
-  useUrlFilter,
-  useUrlFilterValue,
-  createUrlParamsReader,
-  stripConsumedUrlParams,
-  filterToUrlParams,
-  parseFilterEntry,
-  takeFilterEntry,
-  createUrlFilterReader,
-  filterInterceptors,
-  singleSelectInterceptor,
-  multiSelectInterceptor
-};
+export { fields, getFilterValue, useFilter, withFilterValue, SearchInput, FilterProvider, pickSelectValues, createFilterValueMapper, useSearchParamsValue, filterInterceptors, singleSelectInterceptor, multiSelectInterceptor, FILTER_CLASS };
 export { default as AdvancedFilter } from './AdvancedFilter';
 export { default as FilterValueDisplay } from './FilterValueDisplay';
 export { default as FilterItem } from './FilterItem';

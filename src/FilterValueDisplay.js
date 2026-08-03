@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import useFilterIsMobile from './hooks/useFilterIsMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
+import { FILTER_CLASS } from './filterClassNames';
 
 const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChange, className, hideLabel, flush }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
@@ -25,25 +26,37 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
       <Tag
         key={name}
         closable
-        className={style['filter-value-tag']}
+        className={classnames(style['filter-value-tag'], FILTER_CLASS.valueTag)}
         onClose={() => {
           const newValue = filterValue.slice(0);
           newValue.splice(index, 1);
           onChange(newValue);
         }}
       >
-        <span className={style['filter-value-tag-label']}>{label}:</span>
-        <span className={style['filter-value-tag-content']}>{valueLabel}</span>
+        <span className={classnames(style['filter-value-tag-label'], FILTER_CLASS.valueTagLabel)}>{label}:</span>
+        <span className={classnames(style['filter-value-tag-content'], FILTER_CLASS.valueTagContent)}>{valueLabel}</span>
       </Tag>
     );
   });
+
+  const clearButton = (
+    <Button
+      size="small"
+      className={FILTER_CLASS.valueClear}
+      onClick={() => {
+        onChange([]);
+      }}
+    >
+      {formatMessage({ id: 'clearAllText' })}
+    </Button>
+  );
 
   return (
     <Space
       className={classnames(
         style['filter-title'],
         style['filter-value-display'],
-        'filter-value-display-root',
+        FILTER_CLASS.valueDisplay,
         {
           [style['is-hide-label']]: hideLabel,
           [style['is-flush']]: flush
@@ -53,35 +66,28 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
       align="top"
       size={hideLabel ? 0 : 16}
     >
-      {hideLabel ? null : <span className={style['filter-label']}>{formatMessage({ id: 'selectedText' })}</span>}
+      {hideLabel ? null : <span className={classnames(style['filter-label'], FILTER_CLASS.label)}>{formatMessage({ id: 'selectedText' })}</span>}
       {isMobile ? (
         <div className={classnames(style['filter-value-display-content'], !isOverflow && style['is-not-overflow'])}>
           <div className={classnames(style['filter-value-tags-wrap'], isExpand && style['is-expand'])}>
             {showScrollPrev ? <div className={classnames(style['filter-scroll-prev-shadow'], style['filter-value-scroll-prev-shadow'])} /> : null}
-            <div ref={scrollRef} className={classnames(style['filter-line'], style['filter-value-tags'], isExpand && style['is-expand'])}>
+            <div ref={scrollRef} className={classnames(style['filter-line'], style['filter-value-tags'], FILTER_CLASS.line, isExpand && style['is-expand'])}>
               {tags}
             </div>
             {showScrollNext ? <div className={classnames(style['filter-value-scroll-next-shadow'])} /> : null}
           </div>
-          <div className={classnames(style['filter-value-actions'], isOverflow && style['is-overflow'])}>
+          <div className={classnames(style['filter-value-actions'], FILTER_CLASS.valueActions, isOverflow && style['is-overflow'])}>
             <div className={style['filter-value-action-right']}>
               <Space size={4}>
                 {extraExpand}
-                <Button
-                  size="small"
-                  onClick={() => {
-                    onChange([]);
-                  }}
-                >
-                  {formatMessage({ id: 'clearAllText' })}
-                </Button>
+                {clearButton}
               </Space>
             </div>
             {isOverflow ? (
               <Button
                 type="link"
                 size="small"
-                className={style['filter-value-toggle']}
+                className={classnames(style['filter-value-toggle'], FILTER_CLASS.valueToggle)}
                 icon={isExpand ? <UpOutlined /> : <DownOutlined />}
                 onClick={() => {
                   setIsExpand(value => !value);
@@ -92,27 +98,24 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
             ) : null}
             <div className={style['filter-value-action-placeholder']}>
               {extraExpand}
-              <Button size="small">{formatMessage({ id: 'clearAllText' })}</Button>
+              <Button size="small" className={FILTER_CLASS.valueClear}>
+                {formatMessage({ id: 'clearAllText' })}
+              </Button>
             </div>
           </div>
         </div>
       ) : (
-        <div className={style['filter-line']}>
+        <div className={classnames(style['filter-line'], FILTER_CLASS.line)}>
           {tags}
           <Space size={4} className={classnames(style['un-expand-shadow'])}>
             {extraExpand}
-            <Button size="small">{formatMessage({ id: 'clearAllText' })}</Button>
-          </Space>
-          <Space size={4} className={classnames(style['un-expand'])}>
-            {extraExpand}
-            <Button
-              size="small"
-              onClick={() => {
-                onChange([]);
-              }}
-            >
+            <Button size="small" className={FILTER_CLASS.valueClear}>
               {formatMessage({ id: 'clearAllText' })}
             </Button>
+          </Space>
+          <Space size={4} className={classnames(style['un-expand'], FILTER_CLASS.valueActions)}>
+            {extraExpand}
+            {clearButton}
           </Space>
         </div>
       )}

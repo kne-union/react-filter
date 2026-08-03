@@ -1,6 +1,6 @@
 ### React Filter
 
-一个功能强大的 React 筛选组件库，支持多种筛选字段类型、灵活的布局方式，以及完善的 URL 参数双向同步能力。
+一个功能强大的 React 筛选组件库，支持多种筛选字段类型、灵活的布局方式，以及从 searchParams 种子化筛选初始值的能力。
 
 ### 主要特性
 
@@ -9,7 +9,8 @@
 - **展开收起**：筛选行支持展开收起功能，优化页面空间利用
 - **已选值展示**：自动展示已选筛选条件，支持单独删除和清空全部
 - **弹出层交互**：支持弹出层形式的筛选交互，确认后才生效
-- **URL 参数同步**：支持筛选值与 URL 参数的双向序列化/反序列化，自动清除已消费参数
+- **searchParams 种子**：`useSearchParamsValue` 从 URL 平铺参数解析筛选初始值，可选清理已消费 key
+- **稳定全局类名**：根 `react-filter`，内部短类名；用 `.react-filter .xxx` / `FILTER_CLASS` 定制
 - **数据格式拦截器**：内置 `{id, name}` ↔ `{label, value}` 格式转换拦截器，适配 SuperSelect 场景
 - **声明式值映射**：提供 `createFilterValueMapper` 按字段声明转换规则，简化 `getFilterValue` 结果处理
 - **国际化支持**：内置中英文语言包，支持多语言切换
@@ -21,7 +22,7 @@
 - 复杂表单的筛选条件配置
 - 多条件组合查询场景
 - 需要展示已选筛选条件的场景
-- 需要筛选状态与 URL 参数同步保持的页面
+- 需要从 URL 参数带入初始筛选条件的页面
 
 ### 快速开始
 
@@ -88,23 +89,18 @@ function MyComponent() {
 | `SelectIndustryFilterItem` | 行业筛选（多级数据、拼音搜索） |
 | `SelectAddressFilterItem` | 城市筛选（国内外城市搜索） |
 
-### URL 参数工具
+### searchParams 工具
 
 | 工具 | 说明 |
 |------|------|
-| `useUrlFilter` | 从 URL 参数初始化筛选状态的 hook |
-| `useUrlFilterValue` | 简化版 URL 筛选 hook，自动解析 filterParams[key] 格式 |
-| `filterToUrlParams` | 将筛选值序列化为 URL 参数 |
-| `parseFilterEntry` | 解析 URL 参数中的单个筛选值项 |
-| `takeFilterEntry` | 从 URL 参数中读取筛选值项 |
-| `createUrlFilterReader` | 创建 URL 筛选参数读取器 |
-| `createUrlParamsReader` | 创建通用 URL 参数读取器 |
-| `stripConsumedUrlParams` | 移除已消费的 URL 参数 |
+| `useSearchParamsValue` | 从 searchParams 解析筛选初始值数组；可选 strip 已消费 key |
+
 
 ### 其他工具
 
 | 工具 | 说明 |
 |------|------|
+| `FILTER_CLASS` | 稳定全局类名常量（根 `react-filter` + 内部短类名（无 `filter-` 前缀）），见 api.md |
 | `pickSelectValues` | 从筛选值中提取原始值数组 |
 | `createFilterValueMapper` | 声明式创建 mapFilterValue 函数 |
 | `filterInterceptors` | `{single, multi}` 拦截器集合 |

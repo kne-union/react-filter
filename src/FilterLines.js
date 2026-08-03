@@ -9,6 +9,7 @@ import useFilterIsMobile from './hooks/useFilterIsMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 import useVisibleItemCount from './hooks/useVisibleItemCount';
 import { getMobileFilterList, normalizeFilterList } from './normalizeFilterList';
+import { FILTER_CLASS } from './filterClassNames';
 
 const isValidFilterItem = item => !!item && (item.type || typeof item === 'function');
 
@@ -60,7 +61,7 @@ const Line = ({ list, children, innerRef, nowrap }) => {
   return (
     <div
       ref={innerRef}
-      className={classnames(style['filter-line'], {
+      className={classnames(style['filter-line'], FILTER_CLASS.line, {
         [style['filter-line-nowrap']]: nowrap
       })}
     >
@@ -73,13 +74,13 @@ const Line = ({ list, children, innerRef, nowrap }) => {
 const CollapseButtons = ({ onClick, toggleUpText }) => (
   <>
     <Space size={4} className={classnames(style['un-expand-shadow'])}>
-      <Space size={4} className={classnames(style['option'], style['filter-item'])}>
+      <Space size={4} className={classnames(style['option'], style['filter-item'], FILTER_CLASS.item)}>
         {toggleUpText}
         <span className={style['filter-item-option-icon']}>▲</span>
       </Space>
     </Space>
     <Space size={4} className={classnames(style['un-expand'])} onClick={onClick}>
-      <Space size={4} className={classnames(style['option'], style['filter-item'])}>
+      <Space size={4} className={classnames(style['option'], style['filter-item'], FILTER_CLASS.item)}>
         {toggleUpText}
         <span className={style['filter-item-option-icon']}>▲</span>
       </Space>
@@ -151,7 +152,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
     e => {
       if (!isMobile) return;
       const container = scrollRef.current;
-      const item = e.target.closest(`.${style['filter-item-wrap']}`) || e.target.closest(`.${style['filter-item']}`);
+      const item = e.target.closest(`.${FILTER_CLASS.itemWrap}`) || e.target.closest(`.${style['filter-item-wrap']}`) || e.target.closest(`.${FILTER_CLASS.item}`) || e.target.closest(`.${style['filter-item']}`);
       if (!container || !item) return;
       item.scrollIntoView({
         behavior: 'smooth',
@@ -174,7 +175,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   );
 
   const moreButton = (
-    <Space size={4} className={classnames(style['filter-item'], style['option'])} onClick={toggleExpand}>
+    <Space size={4} className={classnames(style['filter-item'], style['option'], FILTER_CLASS.item, FILTER_CLASS.more)} onClick={toggleExpand}>
       {moreButtonLabel}
     </Space>
   );
@@ -214,26 +215,26 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
 
   return (
     <>
-      <Space className={classnames(style['filter-title'], 'filter-title', className)} align="top" size={16}>
-        <span className={style['filter-label']}>{showLabel && (label || formatMessage({ id: 'filterText' }))}</span>
+      <Space className={classnames(style['filter-title'], FILTER_CLASS.title, className)} align="top" size={16}>
+        <span className={classnames(style['filter-label'], FILTER_CLASS.label)}>{showLabel && (label || formatMessage({ id: 'filterText' }))}</span>
         <Row justify="space-between" wrap={false} align="top">
-          <Col className={style['filter-list']} flex={1}>
+          <Col className={classnames(style['filter-list'], FILTER_CLASS.list)} flex={1}>
             <div
               ref={setMeasureContainerRef}
-              className={classnames(style['filter-list-scroll-wrap'], {
+              className={classnames(style['filter-list-scroll-wrap'], FILTER_CLASS.listScrollWrap, {
                 [style['filter-list-constrained']]: !isMobile && isFlatMode,
                 [style['has-scroll-prev']]: isMobile && showScrollPrev
               })}
             >
               {!isMobile && isFlatMode ? (
-                <div ref={setMeasureRef} className={classnames(style['filter-line'], style['filter-line-measure'])} aria-hidden>
+                <div ref={setMeasureRef} className={classnames(style['filter-line'], style['filter-line-measure'], FILTER_CLASS.line)} aria-hidden>
                   {flatItems.filter(isValidFilterItem).map((item, index) => (
                     <div key={item.key || item.props?.name || index} data-filter-measure-item>
                       {renderItem(item, index)}
                     </div>
                   ))}
                   <div ref={setMoreMeasureRef} data-filter-measure-more>
-                    <Space size={4} className={classnames(style['filter-item'], style['option'])}>
+                    <Space size={4} className={classnames(style['filter-item'], style['option'], FILTER_CLASS.item, FILTER_CLASS.more)}>
                       {moreButtonLabel}
                     </Space>
                   </div>
@@ -244,7 +245,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
                   <span className={style['filter-scroll-prev-icon']}>‹</span>
                 </button>
               ) : null}
-              <div className={style['filter-list-scroll']} ref={setScrollContainerRef} onClick={scrollItemIntoView}>
+              <div className={classnames(style['filter-list-scroll'], FILTER_CLASS.listScroll)} ref={setScrollContainerRef} onClick={scrollItemIntoView}>
                 {isMobile ? mobileList.map((item, index) => <Line key={index} list={[item]} />) : renderDesktopContent()}
               </div>
               {isMobile && showScrollNext ? (
@@ -254,21 +255,21 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
               ) : null}
             </div>
           </Col>
-          <Col>{extra}</Col>
+          <Col className={FILTER_CLASS.extra}>{extra}</Col>
         </Row>
       </Space>
-      <Space className={classnames(style['filter-title'], 'filter-title-wrap')} align="center" size={16}>
+      <Space className={classnames(style['filter-title'], FILTER_CLASS.children)} align="center" size={16}>
         {children}
       </Space>
       <Space
-        className={classnames(style['filter-title'], 'filter-title-wrap', {
+        className={classnames(style['filter-title'], FILTER_CLASS.moreRow, {
           [style['filter-title-hidden']]: isMobile || !(hasMore && isExpand)
         })}
         align="top"
         size={16}
       >
-        <span className={style['filter-label']}>{formatMessage({ id: 'moreText' })}</span>
-        <div className={style['filter-list']}>{renderExpandedContent()}</div>
+        <span className={classnames(style['filter-label'], FILTER_CLASS.label)}>{formatMessage({ id: 'moreText' })}</span>
+        <div className={classnames(style['filter-list'], FILTER_CLASS.list)}>{renderExpandedContent()}</div>
       </Space>
     </>
   );
