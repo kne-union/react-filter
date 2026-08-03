@@ -58,7 +58,6 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
         style['filter-value-display'],
         FILTER_CLASS.valueDisplay,
         {
-          [style['is-hide-label']]: hideLabel,
           [style['is-flush']]: flush
         },
         className

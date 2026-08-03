@@ -32,6 +32,10 @@
   padding: 8px var(--padding-width, 16px);
   border-bottom: solid 1px rgba(126, 134, 142, 0.16);
 
+  &:global(.more-row) {
+    border-bottom: none;
+  }
+
   > :global(.ant-space-item:last-child) {
     flex: 1;
     min-width: 0;
@@ -387,12 +391,6 @@
   position: relative;
   width: 100%;
   min-width: 0;
-}
-
-.filter-value-display.is-hide-label {
-  > :global(.ant-space-item:first-child) {
-    display: none !important;
-  }
 }
 
 .filter-value-display.is-flush {

@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A React filter component library with multiple filter types, flexible layouts, and searchParams-based filter seeding.",
   "syntax": {
     "esmodules": true
