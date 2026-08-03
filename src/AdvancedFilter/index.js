@@ -8,6 +8,8 @@ import style from '../style.module.scss';
 import FilterValueDisplay from '../FilterValueDisplay';
 import withLocale from '../withLocale';
 import get from 'lodash/get';
+import classnames from 'classnames';
+import { FILTER_CLASS } from '../filterClassNames';
 
 const Line = ({ list }) => {
   const { value, onChange } = useContext();
@@ -17,7 +19,7 @@ const Line = ({ list }) => {
         const ComponentItem = item.type;
         return (
           <Flex gap={16} key={item.key || item.props.name || index} align="center">
-            <div className={style['filter-label']}>{item.props.label}:</div>
+            <div className={classnames(style['filter-label'], FILTER_CLASS.label)}>{item.props.label}:</div>
             <Flex wrap={true} align="center">
               <ComponentItem
                 {...item.props}
@@ -49,7 +51,7 @@ const AdvancedFilter = withLocale(props => {
         const { list, more } = filterProps;
         return (
           <div>
-            <Flex gap={8} vertical className={style['filter-advanced']}>
+            <Flex gap={8} vertical className={classnames(style['filter-advanced'], FILTER_CLASS.advanced)}>
               {list &&
                 list.map((item, index) => {
                   return <Line key={index} list={item} />;

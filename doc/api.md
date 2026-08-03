@@ -14,7 +14,7 @@
 | label        | `string`                                             | `'筛选'` | 筛选区域标题                   |
 | extra        | `ReactNode`                                          | -        | 额外操作区域，通常放置搜索按钮 |
 | extraExpand  | `ReactNode`                                          | -        | 已选区域额外内容               |
-| className    | `string`                                             | -        | 自定义类名                     |
+| className    | `string`                                             | -        | 挂到根容器的自定义类名；内部节点见「稳定全局类名」 |
 
 #### 静态方法
 
@@ -24,16 +24,57 @@
 | `Filter.useFilter()`                                        | 获取 Filter Context，返回 `{ value, onChange }`                     |
 | `Filter.pickSelectValues(value)`                            | 从筛选值中提取原始值数组，支持 `{ value }`、`{ id }` 格式           |
 | `Filter.createFilterValueMapper(fieldMappers)`              | 声明式创建 mapFilterValue 函数，按字段映射转换规则                  |
-| `Filter.filterToUrlParams(filterValue, options)`            | 将筛选值数组序列化为 URLSearchParams，保留 label 信息               |
-| `Filter.parseFilterEntry(str)`                              | 解析 URL 参数中的单个筛选值项为 `{ label, value }`                  |
-| `Filter.takeFilterEntry(searchParams, key, options)`        | 从 URL 参数中读取筛选值项，支持单选/多选                            |
-| `Filter.createUrlFilterReader(searchParams)`                | 创建 URL 筛选参数读取器，自动追踪已消费的参数 key                   |
-| `Filter.useUrlFilter(options)`                              | 从 URL 参数初始化 Filter 状态的 hook（React Router 环境）           |
-| `Filter.useUrlFilterValue(mapping)`                         | useUrlFilter 的简化版，基于 filterParams[key] 格式自动解析 URL 参数 |
-| `Filter.createUrlParamsReader(searchParams)`                | 创建通用 URL 参数读取器，自动追踪已消费的参数 key                   |
-| `Filter.stripConsumedUrlParams(searchParams, consumedKeys)` | 从 URL 参数中移除已消费的 key，返回新的 URLSearchParams 或 null     |
+| `Filter.useSearchParamsValue(options)`                      | 从 searchParams 解析筛选初始值数组；可选 strip 已消费 URL key       |
 | `Filter.filterInterceptors.single`                          | 单选拦截器：`{id, name}` ↔ `{label, value}` 数据格式转换            |
 | `Filter.filterInterceptors.multi`                           | 多选拦截器：`[{id, name}]` ↔ `[{label, value}]` 数据格式转换        |
+| `Filter.FILTER_CLASS`                                       | 稳定全局类名常量对象，见下方「稳定全局类名」                         |
+
+#### 稳定全局类名
+
+根节点挂 `react-filter`；内部节点挂短类名（与 CSS Modules 默认样式并行）。调用方用 **`.react-filter .xxx`** 限定作用域定制；`className` 仍只挂根。命名可通过 `FILTER_CLASS` / `Filter.FILTER_CLASS` 引用。
+
+| 常量键 | 类名 | 节点 |
+|--------|------|------|
+| `root` | `react-filter` | 根容器 |
+| `isMobile` | `is-mobile` | 移动端根修饰 |
+| `title` | `title` | 筛选项标题行 |
+| `label` | `label` | 行标题文案（筛选 / 已选 / 更多） |
+| `list` | `list` | 筛选项列表区 |
+| `listScrollWrap` | `list-scroll-wrap` | 列表滚动外层 |
+| `listScroll` | `list-scroll` | 列表滚动容器 |
+| `line` | `line` | 筛选项行 |
+| `extra` | `extra` | 行右侧 extra |
+| `more` | `more` | 「更多」按钮 |
+| `moreRow` | `more-row` | 展开后的更多行 |
+| `children` | `children` | FilterLines children 行 |
+| `itemWrap` | `item-wrap` | 筛选项外层 |
+| `item` | `item` | 筛选项 |
+| `itemActive` | `is-active` | 筛选项激活（挂在 item 上） |
+| `itemVisited` | `is-visited` | 筛选项打开中（挂在 item 上） |
+| `itemLabel` | `item-label` | 筛选项标签 |
+| `itemIcon` | `item-icon` | 筛选项箭头 |
+| `itemField` | `item-field` | 筛选项字段区 |
+| `valueDisplay` | `value-display` | 已选值展示根 |
+| `valueTag` | `value-tag` | 已选 Tag |
+| `valueTagLabel` | `value-tag-label` | Tag 字段名 |
+| `valueTagContent` | `value-tag-content` | Tag 值文案 |
+| `valueActions` | `value-actions` | 已选操作区 |
+| `valueClear` | `value-clear` | 清空按钮 |
+| `valueToggle` | `value-toggle` | 展开/收起按钮 |
+| `advanced` | `advanced` | AdvancedFilter 内容区 |
+
+**迁移：** 根由裸 `filter` 改为 `react-filter`；内部类名去掉 `filter-` / `react-filter-` 前缀（如原 `filter-title` → `title`，在 `.react-filter` 下使用）。
+
+```css
+.react-filter .title { padding: 12px 0; }
+.react-filter .item.is-active { color: var(--primary-color); }
+.react-filter .value-tag { border-radius: 4px; }
+```
+
+```javascript
+import { FILTER_CLASS } from '@kne/react-filter';
+// `.${FILTER_CLASS.root} .${FILTER_CLASS.item}`
+```
 
 #### 使用示例
 
@@ -530,237 +571,45 @@ interface FilterValueItem {
 
 ---
 
-### URL 参数相关
+### searchParams 相关
 
-#### filterToUrlParams
+#### useSearchParamsValue
 
-将筛选值数组序列化为 URLSearchParams，保留 label 信息以便反序列化还原完整筛选状态。
+从 `searchParams` 同步解析筛选初始值数组。不管理 Filter 的 `value` / `defaultValue` / `onChange`，由调用方自行 seed。若传入 `setSearchParams`（function），mount 后会以 `replace: true` 清除已消费的 URL key。
 
-| 参数           | 类型     | 默认值           | 说明                                 |
-| -------------- | -------- | ---------------- | ------------------------------------ |
-| filterValue    | `Array`  | -                | 筛选值数组                           |
-| options.prefix | `string` | `'filterParams'` | URL 参数前缀，设为空字符串则不加前缀 |
-
-**序列化格式**：
-
-- 单值且 `label === value`：`prefix[name]=value`（如输入框）
-- 单值且 `label !== value`：`prefix[name]=label:value`
-- 多值：`prefix[name]=label1:value1,label2:value2`
-
-**使用示例：**
-
+**函数签名：**
 ```javascript
-import { filterToUrlParams } from '@kne/react-filter';
-
-const params = filterToUrlParams([
-  { name: 'keyword', label: '关键词', value: { label: '测试', value: '测试' } },
-  {
-    name: 'city',
-    label: '城市',
-    value: [
-      { label: '上海', value: '010' },
-      { label: '北京', value: '020' }
-    ]
-  }
-]);
-// params.toString() => 'filterParams[keyword]=测试&filterParams[city]=上海:010,北京:020'
-
-// 自定义前缀
-filterToUrlParams(filterValue, { prefix: 'f' });
-// => 'f[keyword]=测试'
-
-// 无前缀（直接平铺到 URL）
-filterToUrlParams(filterValue, { prefix: '' });
-// => 'keyword=测试'
+useSearchParamsValue(options): array
 ```
 
----
+**参数：**
 
-#### parseFilterEntry
+| 参数 | 说明 | 类型 | 必填 |
+|------|------|------|------|
+| options.searchParams | URL 查询参数 | URLSearchParams | 是 |
+| options.setSearchParams | 清理已消费 key；非 function 则只读 | function | 否 |
+| options.fields | `[{ name, label }]`，`name` 为 URL key 与筛选 name | array | 是 |
 
-解析 URL 参数中的单个筛选值项，反序列化为 `{ label, value }` 对象。
+**返回值：** `searchParamsValue` 筛选值数组（可能为 `[]`）。每项形如 `{ name, label, value: { label: raw, value: raw } }`。
 
-| 参数 | 类型     | 说明                   |
-| ---- | -------- | ---------------------- |
-| str  | `string` | URL 参数中的原始字符串 |
-
-**解析规则**：
-
-- 无冒号：label 和 value 相同，如 `"测试"` → `{ label: '测试', value: '测试' }`
-- 有冒号：冒号前为 label，冒号后为 value，如 `"启用:active"` → `{ label: '启用', value: 'active' }`
-
+**示例：**
 ```javascript
-import { parseFilterEntry } from '@kne/react-filter';
+import { useSearchParamsValue } from '@kne/react-filter';
+import { useSearchParams } from 'react-router-dom';
 
-parseFilterEntry('测试');
-// => { label: '测试', value: '测试' }
-
-parseFilterEntry('启用:active');
-// => { label: '启用', value: 'active' }
-```
-
----
-
-#### takeFilterEntry
-
-从 URL 参数中读取筛选值项，返回单选 `{ label, value }` 或多选数组。
-
-| 参数           | 类型              | 默认值           | 说明               |
-| -------------- | ----------------- | ---------------- | ------------------ |
-| searchParams   | `URLSearchParams` | -                | URL 参数对象       |
-| key            | `string`          | -                | 参数名（不含前缀） |
-| options.multi  | `boolean`         | `false`          | 是否多选           |
-| options.prefix | `string`          | `'filterParams'` | URL 参数前缀       |
-
-```javascript
-import { takeFilterEntry } from '@kne/react-filter';
-
-// URL: ?filterParams[city]=上海:010,北京:020
-takeFilterEntry(searchParams, 'city', { multi: true });
-// => [{ label: '上海', value: '010' }, { label: '北京', value: '020' }]
-
-takeFilterEntry(searchParams, 'keyword', { prefix: '' });
-// => { label: '测试', value: '测试' }
-```
-
----
-
-#### createUrlFilterReader
-
-创建 URL 筛选参数读取器，自动追踪已消费的参数 key。配合 `useUrlFilter` 使用，readUrlParams 返回的 consumedKeys 可被自动清除。
-
-| 参数           | 类型              | 默认值           | 说明         |
-| -------------- | ----------------- | ---------------- | ------------ |
-| searchParams   | `URLSearchParams` | -                | URL 参数对象 |
-| options.prefix | `string`          | `'filterParams'` | URL 参数前缀 |
-
-**返回值**：`{ takeFilterEntry, getConsumedKeys }`
-
-```javascript
-import { createUrlFilterReader } from '@kne/react-filter';
-
-const { takeFilterEntry, getConsumedKeys } = createUrlFilterReader(searchParams);
-const keyword = takeFilterEntry('keyword');
-const city = takeFilterEntry('city', { multi: true });
-// getConsumedKeys() => ['filterParams[keyword]', 'filterParams[city]']
-```
-
----
-
-#### useUrlFilter
-
-从 URL 参数初始化 Filter 状态的 hook，读取 URL 参数构建初始筛选值，并在挂载后自动清除已消费的 URL 参数。
-
-> 需要 React Router 环境支持 `useSearchParams`。
-
-| 参数                  | 类型       | 说明                                                      |
-| --------------------- | ---------- | --------------------------------------------------------- |
-| options.readUrlParams | `Function` | 读取 URL 参数并返回 `{ consumedKeys: string[], ...data }` |
-| options.buildFilter   | `Function` | 接收 readUrlParams 的返回值，构建初始 filter 数组         |
-
-**返回值**：`[filter, setFilter]`
-
-```javascript
-import { useUrlFilter, createUrlParamsReader } from '@kne/react-filter';
-
-const [filter, setFilter] = useUrlFilter({
-  readUrlParams: searchParams => {
-    const { take, getConsumedKeys } = createUrlParamsReader(searchParams);
-    const orgId = take('tenantOrgId');
-    return { consumedKeys: getConsumedKeys(), orgId };
-  },
-  buildFilter: ({ orgId }) => [{ name: 'status', value: { label: '开启', value: 'open' } }, ...(orgId ? [{ name: 'tenantOrgId', value: { label: orgId, value: orgId } }] : [])]
+const [searchParams, setSearchParams] = useSearchParams();
+const searchParamsValue = useSearchParamsValue({
+  searchParams,
+  setSearchParams,
+  fields: [
+    { name: 'userId', label: '用户Id' },
+    { name: 'tenantId', label: '租户Id' }
+  ]
 });
+const [filter, setFilter] = useState(searchParamsValue);
+// 或 <Filter defaultValue={searchParamsValue} ... />
 ```
 
----
-
-#### useUrlFilterValue
-
-`useUrlFilter` 的简化版，基于 `filterParams[key]` 格式自动解析 URL 参数，支持单选和多选。
-
-| 参数    | 类型                 | 说明                                 |
-| ------- | -------------------- | ------------------------------------ |
-| mapping | `string[] \| Object` | URL 参数映射，支持数组、对象两种格式 |
-
-**数组形式（默认单选）：**
-
-```javascript
-import { useUrlFilterValue } from '@kne/react-filter';
-
-const [filter, setFilter] = useUrlFilterValue(['keyword', 'status']);
-// URL: ?filterParams[keyword]=前端开发&filterParams[status]=招聘中:active
-// → filter: [
-//     { name: 'keyword', value: { label: '前端开发', value: '前端开发' } },
-//     { name: 'status', value: { label: '招聘中', value: 'active' } }
-//   ]
-```
-
-**对象形式（多选 + 自定义）：**
-
-```javascript
-const [filter, setFilter] = useUrlFilterValue({
-  keyword: true, // 单选
-  city: { multi: true }, // 多选
-  status: parsed => {
-    // 自定义转换
-    return parsed ? { name: 'status', value: parsed } : null;
-  }
-});
-// URL: ?filterParams[keyword]=测试&filterParams[city]=上海:010,北京:020
-```
-
----
-
-#### createUrlParamsReader
-
-创建通用 URL 参数读取器，自动追踪已消费的参数 key。
-
-| 参数         | 类型              | 说明         |
-| ------------ | ----------------- | ------------ |
-| searchParams | `URLSearchParams` | URL 参数对象 |
-
-**返回值**：`{ take, getConsumedKeys }`
-
-- `take(key)` - 读取参数值，记录已消费
-- `getConsumedKeys()` - 返回已消费的 key 列表
-
-```javascript
-import { createUrlParamsReader } from '@kne/react-filter';
-
-const { take, getConsumedKeys } = createUrlParamsReader(searchParams);
-const orgId = take('tenantOrgId');
-const orgName = take('orgName');
-// getConsumedKeys() => ['tenantOrgId', 'orgName']
-```
-
----
-
-#### stripConsumedUrlParams
-
-从 URL 参数中移除已消费的 key，返回新的 URLSearchParams 或 null（无变化时）。
-
-| 参数         | 类型              | 说明                |
-| ------------ | ----------------- | ------------------- |
-| searchParams | `URLSearchParams` | 当前 URL 参数       |
-| consumedKeys | `string[]`        | 需要移除的 key 列表 |
-
-**返回值**：`URLSearchParams | null`
-
-```javascript
-import { stripConsumedUrlParams } from '@kne/react-filter';
-
-const nextParams = stripConsumedUrlParams(searchParams, ['tenantOrgId', 'orgName']);
-if (nextParams) {
-  setSearchParams(nextParams, { replace: true });
-}
-```
-
----
-
-### 拦截器
-
-用于 SuperSelect 组件的 `{id, name}` 与 Filter 的 `{label, value}` 数据格式互转。
 
 #### singleSelectInterceptor
 
