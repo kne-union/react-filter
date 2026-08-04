@@ -64,7 +64,10 @@ const withFieldItem =
         offset: MOBILE_POPUP_OFFSET
       });
       setPopupMetrics(metrics);
-      setMobilePopupVariables(metrics);
+      // height=0 时不要写入 CSS 变量，否则 max-height:0 会把弹层「吃掉」
+      if (metrics.height > 0) {
+        setMobilePopupVariables(metrics);
+      }
     }, [getMountNode, getScrollElement, setMobilePopupVariables, useBoundaryMount]);
 
     useResponsiveScrollListener(updatePopupMetrics, open && isMobile);

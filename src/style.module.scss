@@ -185,11 +185,37 @@
 }
 
 .filter-item-wrap {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: max-content;
+  max-width: 100%;
   height: auto;
+  vertical-align: top;
+}
+
+// PopoverItem：外层不参与 Dropdown 布局塌缩，宽度由 label 的 max-content 锁定
+.popover-item-trigger {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: max-content;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+// 铺满绝对定位的 item-field，承接点击（与 withFieldItem 内隐式控件同层）
+.popover-item-hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 
 .filter-item {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: max-content;
   height: 20px;
   overflow: hidden;
   color: var(--font-color-grey, #666);
@@ -259,8 +285,11 @@
 
 .filter-item-label {
   white-space: nowrap;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: var(--font-size-small, 12px) !important;
+  line-height: 20px;
 }
 
 .filter-item-field {
@@ -302,6 +331,12 @@
 
   .filter-list-scroll {
     overflow: hidden;
+  }
+
+  // 收起态：强制单行，超出由容器截断（消除首屏 wrap 跳动）
+  .filter-line-nowrap {
+    flex-wrap: nowrap;
+    width: 100%;
   }
 }
 
@@ -462,9 +497,6 @@
   &:global(.kne-is-boundary) {
     left: 0 !important;
     right: auto !important;
-    width: var(--kne-viewport-width, 100vw) !important;
-    max-width: var(--kne-viewport-width, 100vw) !important;
-    min-width: var(--kne-viewport-width, 100vw) !important;
     max-height: var(--react-filter-popover-mobile-height, 100vh);
     overflow: hidden;
     border-radius: 0 !important;
@@ -509,12 +541,19 @@
     }
   }
 
+  // fixed 挂 body：用视口变量；boundary 绝对定位：必须跟挂载容器同宽，不能用 100vw（example 手机预览会撑破）
   &:global(.kne-is-viewport) {
     position: fixed !important;
+    width: var(--kne-viewport-width, 100vw) !important;
+    max-width: var(--kne-viewport-width, 100vw) !important;
+    min-width: var(--kne-viewport-width, 100vw) !important;
   }
 
   &:global(.kne-is-boundary) {
     position: absolute !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 }
 
@@ -548,7 +587,8 @@
   left: 0 !important;
   right: auto !important;
   top: var(--react-filter-field-mobile-top) !important;
-  width: var(--kne-viewport-width, 100vw) !important;
+  // 无 kne-is-* 时仍有宽度兜底，避免 SuperSelect 弹层宽为 0
+  width: var(--kne-viewport-width, 100vw);
   max-width: var(--kne-viewport-width, 100vw);
   max-height: var(--react-filter-field-mobile-height, 100vh);
   overflow: hidden;
@@ -560,10 +600,15 @@
 
   &:global(.kne-is-viewport) {
     position: fixed !important;
+    width: var(--kne-viewport-width, 100vw) !important;
+    max-width: var(--kne-viewport-width, 100vw);
   }
 
   &:global(.kne-is-boundary) {
     position: absolute !important;
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
   }
 
   &:global(.ant-slide-up-enter),
@@ -602,8 +647,8 @@
     }
 
     .over-content {
-      width: var(--kne-viewport-width, 100vw);
-      max-width: var(--kne-viewport-width, 100vw);
+      width: 100%;
+      max-width: 100%;
       min-width: unset;
       max-height: var(--react-filter-field-mobile-height, 100vh);
       overflow: hidden;
@@ -859,19 +904,31 @@
 }
 
 @mixin filter-mobile-styles {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
   .filter-title {
+    // ant Space 默认 inline-flex，会按内容撑开，导致 list-scroll width:100% 跟着变成内容宽
+    display: flex !important;
     gap: 0 !important;
     padding: 4px 0;
     box-sizing: border-box;
     border-bottom: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
     :global(.ant-row) {
       width: 100%;
+      max-width: 100%;
       min-width: 0;
     }
 
     > :global(.ant-space-item:last-child) {
-      min-width: 0;
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      max-width: 100%;
       overflow: hidden;
     }
   }
@@ -1008,6 +1065,10 @@
   .filter-list-scroll-wrap {
     padding-right: 18px;
     overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 
     &.has-scroll-prev {
       padding-left: 18px;
@@ -1023,6 +1084,10 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-padding-inline: 8px 36px;
@@ -1042,9 +1107,10 @@
 
   .filter-list {
     flex: 1 1 0 !important;
-    min-width: 0;
+    min-width: 0 !important;
     max-width: 100%;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .filter-scroll-prev-shadow {

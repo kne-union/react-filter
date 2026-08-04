@@ -1,12 +1,11 @@
 import classnames from 'classnames';
-import { Space } from 'antd';
 import style from './style.module.scss';
-import withLocale from './withLocale';
 import { FILTER_CLASS } from './filterClassNames';
 
-const FilterItem = withLocale(({ open, active, label, children }) => {
+// 不用 ant Space / withLocale：避免首帧 inline-flex 未就绪或 intl Fetch 空挂载导致宽度为 0
+const FilterItem = ({ open, active, label, children }) => {
   return (
-    <Space className={classnames(style['filter-item-wrap'], FILTER_CLASS.itemWrap)}>
+    <div className={classnames(style['filter-item-wrap'], FILTER_CLASS.itemWrap)}>
       <div
         className={classnames(style['filter-item'], FILTER_CLASS.item, {
           [style['is-active']]: active,
@@ -15,14 +14,14 @@ const FilterItem = withLocale(({ open, active, label, children }) => {
           [FILTER_CLASS.itemVisited]: open
         })}
       >
-        <Space className={classnames(style['filter-item-label'], FILTER_CLASS.itemLabel)} size={4}>
-          <div>{label}</div>
+        <span className={classnames(style['filter-item-label'], FILTER_CLASS.itemLabel)}>
+          <span>{label}</span>
           <span className={classnames(style['filter-item-icon'], FILTER_CLASS.itemIcon)}>▼</span>
-        </Space>
-        <div className={classnames(style['filter-item-field'], FILTER_CLASS.itemField)}>{children}</div>
+        </span>
+        {children != null ? <div className={classnames(style['filter-item-field'], FILTER_CLASS.itemField)}>{children}</div> : null}
       </div>
-    </Space>
+    </div>
   );
-});
+};
 
 export default FilterItem;

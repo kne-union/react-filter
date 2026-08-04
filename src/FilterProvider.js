@@ -24,8 +24,15 @@ const FilterProvider = ({ children, value: valueBase, onChange, defaultValue = [
         value: filterValue,
         onChange: item => {
           const newFilterValue = clone(filterValue);
-          item.value ? newFilterValue.set(item.name, item) : newFilterValue.delete(item.name);
-          onChange?.(Array.from(newFilterValue.values()));
+          // 多选清空为 [] 时 [] 仍为 truthy，必须用 isNotEmpty，否则会残留「角色:」空标签
+          const kept = isNotEmpty(item?.value);
+          if (kept) {
+            newFilterValue.set(item.name, item);
+          } else {
+            newFilterValue.delete(item.name);
+          }
+          const next = Array.from(newFilterValue.values());
+          onChange?.(next);
         }
       }}
     >

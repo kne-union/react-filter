@@ -39,10 +39,29 @@ const useHorizontalScrollShadows = ({ enabled, suspend = false, preserveOverflow
 
     update();
     el.addEventListener('scroll', update);
-    const rafId = window.requestAnimationFrame(update);
+
+    // 双 rAF：等父级 flex（如 toolbar 右侧 buttonGroup）完成布局后再测一次
+    let raf2 = 0;
+    const raf1 = window.requestAnimationFrame(() => {
+      update();
+      raf2 = window.requestAnimationFrame(update);
+    });
+
+    // 容器自身/父级宽度变化时重测（初始化时父级可能尚未收窄，仅靠 scroll 事件不够）
+    let resizeObserver;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(update);
+      resizeObserver.observe(el);
+      if (el.parentElement) {
+        resizeObserver.observe(el.parentElement);
+      }
+    }
+
     return () => {
       el.removeEventListener('scroll', update);
-      window.cancelAnimationFrame(rafId);
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+      resizeObserver?.disconnect();
     };
   }, [enabled, refreshKey, suspend, update]);
 
