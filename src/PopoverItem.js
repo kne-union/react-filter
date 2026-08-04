@@ -110,6 +110,8 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
         '--react-filter-popover-mobile-height': `${popupMetrics.height}px`,
         top: popupMetrics.top,
         left: popupMetrics.left ?? 0,
+        // boundary 下宽度跟挂载容器走；viewport 下用测量宽度兜底，避免 CSS 变量未写入时落到 100vw
+        ...(popupMetrics.width ? { width: popupMetrics.width } : null),
         zIndex: MOBILE_POPUP_Z_INDEX
       }
     : undefined;
@@ -145,6 +147,8 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
     </div>
   );
 
+  // 宽度由外层 FilterItem label（max-content）锁定；Dropdown 只在绝对定位 field 内承接点击，
+  // 避免作为 filter-line flex 子项时 Trigger 首帧宽为 0。
   return (
     <>
       {renderMask &&
@@ -164,24 +168,26 @@ const PopoverItem = withLocale(({ value, label, onValidate, overlayClassName, pl
           />,
           popupMountNode
         )}
-      <Dropdown
-        open={open}
-        trigger={['click']}
-        placement={isMobile ? 'bottomLeft' : placement}
-        autoAdjustOverflow={!isMobile}
-        align={isMobile ? { offset: [0, 0] } : undefined}
-        getPopupContainer={resolveGetPopupContainer}
-        zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : undefined}
-        overlayClassName={classnames(style['pop-util-overlay'], overlayClassName, isMobile && fixedModeClass)}
-        overlayStyle={mobileOverlayStyle}
-        onOpenChange={handleOpenChange}
-        menu={{ items: [{ key: 'content', label: null }] }}
-        dropdownRender={() => overlayContent}
-      >
-        <span ref={setTriggerRef}>
-          <FilterItem open={open} active={isNotEmpty(value)} label={label} />
-        </span>
-      </Dropdown>
+      <span ref={setTriggerRef} className={style['popover-item-trigger']}>
+        <FilterItem open={open} active={isNotEmpty(value)} label={label}>
+          <Dropdown
+            open={open}
+            trigger={['click']}
+            placement={isMobile ? 'bottomLeft' : placement}
+            autoAdjustOverflow={!isMobile}
+            align={isMobile ? { offset: [0, 0] } : undefined}
+            getPopupContainer={resolveGetPopupContainer}
+            zIndex={isMobile ? MOBILE_POPUP_Z_INDEX : undefined}
+            overlayClassName={classnames(style['pop-util-overlay'], overlayClassName, isMobile && fixedModeClass)}
+            overlayStyle={mobileOverlayStyle}
+            onOpenChange={handleOpenChange}
+            menu={{ items: [{ key: 'content', label: null }] }}
+            dropdownRender={() => overlayContent}
+          >
+            <span className={style['popover-item-hit']} role="button" tabIndex={0} />
+          </Dropdown>
+        </FilterItem>
+      </span>
     </>
   );
 });

@@ -95,7 +95,7 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   const [isExpand, setIsExpand] = useState(false);
   const isMobile = useFilterIsMobile();
   const { scrollRef, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({ enabled: isMobile, refreshKey: list });
-  const { setContainerRef, setMeasureRef, setMoreMeasureRef, visibleCount } = useVisibleItemCount({
+  const { setContainerRef, setMeasureRef, setMoreMeasureRef, visibleCount, ready } = useVisibleItemCount({
     items: flatItems,
     enabled: !isMobile && isFlatMode,
     strategy: visibleCountStrategy
@@ -103,9 +103,11 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   const renderItem = useFilterItemRenderer();
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
 
-  const visibleFlatItems = isFlatMode ? flatItems.slice(0, visibleCount) : [];
-  const hiddenFlatItems = isFlatMode ? flatItems.slice(visibleCount) : [];
-  const hasMoreFlat = hiddenFlatItems.length > 0;
+  // 未 ready：单行全量截断测量（不换行）；ready 后按 visibleCount 裁切；仅用户点开「更多」才换行
+  const hasMoreFlat = isFlatMode && ready && visibleCount < flatItems.length;
+  const visibleFlatItems = isFlatMode ? (isExpand || !ready ? flatItems : flatItems.slice(0, visibleCount)) : [];
+  // 「更多」未点开时始终单行；展开后才允许换行
+  const flatNowrap = isFlatMode && !isExpand;
   const hasMoreNested = !isFlatMode && lines.length > displayLine;
   const hasMore = isFlatMode ? hasMoreFlat : hasMoreNested;
   const visibleLines = !isFlatMode ? lines.slice(0, displayLine) : [];
@@ -180,11 +182,19 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
     </Space>
   );
 
+  const collapseButton = (
+    <Space size={4} className={classnames(style['filter-item'], style['option'], FILTER_CLASS.item, FILTER_CLASS.more)} onClick={toggleExpand}>
+      {formatMessage({ id: 'toggleUpText' })}
+      <span className={style['filter-item-option-icon']}>▲</span>
+    </Space>
+  );
+
   const renderDesktopContent = () => {
     if (isFlatMode) {
       return (
-        <Line list={visibleFlatItems} nowrap={hasMoreFlat && !isExpand}>
+        <Line list={visibleFlatItems} nowrap={flatNowrap}>
           {hasMoreFlat && !isExpand ? <span data-filter-more>{moreButton}</span> : null}
+          {hasMoreFlat && isExpand ? <span data-filter-more>{collapseButton}</span> : null}
         </Line>
       );
     }
@@ -197,13 +207,9 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   };
 
   const renderExpandedContent = () => {
+    // 扁平模式展开已在主行全量渲染，more-row 仅嵌套 list 使用
     if (isFlatMode) {
-      if (!hiddenFlatItems.length) return null;
-      return (
-        <Line list={hiddenFlatItems}>
-          <CollapseButtons onClick={toggleExpand} toggleUpText={formatMessage({ id: 'toggleUpText' })} />
-        </Line>
-      );
+      return null;
     }
 
     return hiddenLines.map((line, index) => (
@@ -222,7 +228,8 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
             <div
               ref={setMeasureContainerRef}
               className={classnames(style['filter-list-scroll-wrap'], FILTER_CLASS.listScrollWrap, {
-                [style['filter-list-constrained']]: !isMobile && isFlatMode,
+                // 未展开时单行裁切；展开后取消约束以允许换行
+                [style['filter-list-constrained']]: !isMobile && isFlatMode && !isExpand,
                 [style['has-scroll-prev']]: isMobile && showScrollPrev
               })}
             >
@@ -258,12 +265,14 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
           <Col className={FILTER_CLASS.extra}>{extra}</Col>
         </Row>
       </Space>
-      <Space className={classnames(style['filter-title'], FILTER_CLASS.children)} align="center" size={16}>
-        {children}
-      </Space>
+      {children ? (
+        <Space className={classnames(style['filter-title'], FILTER_CLASS.children)} align="center" size={16}>
+          {children}
+        </Space>
+      ) : null}
       <Space
         className={classnames(style['filter-title'], FILTER_CLASS.moreRow, {
-          [style['filter-title-hidden']]: isMobile || !(hasMore && isExpand)
+          [style['filter-title-hidden']]: isMobile || isFlatMode || !(hasMore && isExpand)
         })}
         align="top"
         size={16}

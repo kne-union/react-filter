@@ -9,18 +9,31 @@ import useFilterIsMobile from './hooks/useFilterIsMobile';
 import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 import { FILTER_CLASS } from './filterClassNames';
 
+const isDisplayValueEmpty = value => {
+  if (value === null || value === undefined) return true;
+  if (typeof value === 'string' && value.trim() === '') return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+  return false;
+};
+
 const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChange, className, hideLabel, flush }) => {
   const { formatMessage } = useIntl({ moduleName: 'Filter' });
   const [isExpand, setIsExpand] = useState(false);
   const isMobile = useFilterIsMobile();
+  // 防御：受控 value 里可能残留多选清空后的 { value: [] }
+  const displayValue = (Array.isArray(filterValue) ? filterValue : []).filter(item => !isDisplayValueEmpty(item?.value));
   const { scrollRef, isOverflow, showScrollPrev, showScrollNext } = useHorizontalScrollShadows({
     enabled: isMobile,
     suspend: isExpand,
     preserveOverflowOnSuspend: true,
-    refreshKey: filterValue
+    refreshKey: displayValue
   });
 
-  const tags = filterValue.map(({ name, label, value }, index) => {
+  if (displayValue.length === 0) {
+    return null;
+  }
+
+  const tags = displayValue.map(({ name, label, value }, index) => {
     const valueLabel = Array.isArray(value) ? value.map(item => item.label).join('，') : value?.label;
     return (
       <Tag
@@ -28,7 +41,7 @@ const FilterValueDisplay = withLocale(({ value: filterValue, extraExpand, onChan
         closable
         className={classnames(style['filter-value-tag'], FILTER_CLASS.valueTag)}
         onClose={() => {
-          const newValue = filterValue.slice(0);
+          const newValue = displayValue.slice(0);
           newValue.splice(index, 1);
           onChange(newValue);
         }}
