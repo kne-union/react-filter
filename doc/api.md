@@ -588,9 +588,9 @@ useSearchParamsValue(options): array
 |------|------|------|------|
 | options.searchParams | URL 查询参数 | URLSearchParams | 是 |
 | options.setSearchParams | 清理已消费 key；非 function 则只读 | function | 否 |
-| options.fields | `[{ name, label }]`，`name` 为 URL key 与筛选 name | array | 是 |
+| options.fields | `[{ name, label, labelKey? }]`。`name` 为 URL key 与筛选 name；`label` 为筛选项标题；可选 `labelKey` 为选中值展示文案的 URL key | array | 是 |
 
-**返回值：** `searchParamsValue` 筛选值数组（可能为 `[]`）。每项形如 `{ name, label, value: { label: raw, value: raw } }`。
+**返回值：** `searchParamsValue` 筛选值数组（可能为 `[]`）。每项形如 `{ name, label, value: { label, value } }`；有 `labelKey` 时 `value.label` 取自对应 URL 参数，否则等于 `value.value`。
 
 **示例：**
 ```javascript
@@ -602,10 +602,12 @@ const searchParamsValue = useSearchParamsValue({
   searchParams,
   setSearchParams,
   fields: [
-    { name: 'userId', label: '用户Id' },
-    { name: 'tenantId', label: '租户Id' }
+    { name: 'status', label: '状态' },
+    { name: 'tenantOrgId', label: '部门', labelKey: 'tenantOrgName' }
   ]
 });
+// ?tenantOrgId=org-1&tenantOrgName=技术部
+// → { name: 'tenantOrgId', label: '部门', value: { label: '技术部', value: 'org-1' } }
 const [filter, setFilter] = useState(searchParamsValue);
 // 或 <Filter defaultValue={searchParamsValue} ... />
 ```
