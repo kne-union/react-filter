@@ -3,9 +3,14 @@ import { useState, useEffect, useRef } from 'react';
 /**
  * 从 URLSearchParams + fields 解析筛选初始值（内部使用，不导出）。
  *
+ * fields 项：
+ * - name：URL key，同时作为筛选字段 name
+ * - label：筛选项标题（如「部门」）
+ * - labelKey：可选，另一 URL key，作为选中值的展示文案（如部门名）；缺省时展示文案等于 name 对应的原始值
+ *
  * @param {Object} options
  * @param {URLSearchParams} [options.searchParams]
- * @param {Array<{ name: string, label?: string }>} [options.fields]
+ * @param {Array<{ name: string, label?: string, labelKey?: string }>} [options.fields]
  * @returns {{ items: Array, consumedKeys: string[] }}
  */
 const parseSearchParamsValue = ({ searchParams, fields } = {}) => {
@@ -26,11 +31,22 @@ const parseSearchParamsValue = ({ searchParams, fields } = {}) => {
       return;
     }
     consumedKeys.push(name);
+
+    let valueText = raw;
+    const labelKey = field.labelKey;
+    if (labelKey && searchParams.has(labelKey)) {
+      const fromLabelKey = searchParams.get(labelKey);
+      if (fromLabelKey != null && fromLabelKey !== '') {
+        valueText = fromLabelKey;
+        consumedKeys.push(labelKey);
+      }
+    }
+
     const label = field.label != null ? field.label : name;
     items.push({
       name,
       label,
-      value: { label: raw, value: raw }
+      value: { label: valueText, value: raw }
     });
   });
 
@@ -66,7 +82,7 @@ const stripConsumedUrlParams = (searchParams, consumedKeys) => {
  * @param {Object} options
  * @param {URLSearchParams} options.searchParams
  * @param {Function} [options.setSearchParams] - 为 function 时 strip 已消费 key（replace: true）
- * @param {Array<{ name: string, label?: string }>} options.fields
+ * @param {Array<{ name: string, label?: string, labelKey?: string }>} options.fields
  * @returns {Array} searchParamsValue
  *
  * @example
@@ -74,10 +90,12 @@ const stripConsumedUrlParams = (searchParams, consumedKeys) => {
  *   searchParams,
  *   setSearchParams,
  *   fields: [
- *     { name: 'userId', label: '用户Id' },
- *     { name: 'tenantId', label: '租户Id' }
+ *     { name: 'status', label: '状态' },
+ *     { name: 'tenantOrgId', label: '部门', labelKey: 'tenantOrgName' }
  *   ]
  * });
+ * // ?tenantOrgId=org-1&tenantOrgName=技术部
+ * // → { name: 'tenantOrgId', label: '部门', value: { label: '技术部', value: 'org-1' } }
  * const [filter, setFilter] = useState(searchParamsValue);
  */
 const useSearchParamsValue = ({ searchParams, setSearchParams, fields } = {}) => {
