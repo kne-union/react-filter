@@ -1,6 +1,6 @@
 {
   "name": "@kne/react-filter",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A React filter component library with multiple filter types, flexible layouts, and searchParams-based filter seeding.",
   "syntax": {
     "esmodules": true
@@ -106,9 +106,10 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
+    "@kne/overflow-items": "^0.1.0",
     "@kne/react-intl": "^0.1.9",
     "@kne/responsive-utils": "^0.1.13",
-    "@kne/super-select": "^0.1.45",
+    "@kne/super-select": "^0.1.46",
     "@kne/super-select-plus": "^0.1.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.10",
