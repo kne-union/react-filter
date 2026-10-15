@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import style from './style.module.scss';
 import useFilterPopupContainer from '../../hooks/useFilterPopupContainer';
 import { MOBILE_POPUP_Z_INDEX } from '../../constants/mobilePopup';
+import withLocale from '../../withLocale';
 
 const FIELD_MOBILE_POPUP_CLASS = 'react-filter-field-mobile-popup';
 
@@ -184,4 +185,4 @@ const TypeDateRangePickerField = ({ value: valueProp, onChange: onChangeProp, de
   );
 };
 
-export default TypeDateRangePickerField;
+export default withLocale(TypeDateRangePickerField);

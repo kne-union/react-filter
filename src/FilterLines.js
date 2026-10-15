@@ -10,6 +10,7 @@ import useHorizontalScrollShadows from './hooks/useHorizontalScrollShadows';
 import useVisibleItemCount from './hooks/useVisibleItemCount';
 import { getMobileFilterList, normalizeFilterList } from './normalizeFilterList';
 import { FILTER_CLASS } from './filterClassNames';
+import withLocale from './withLocale';
 
 const isValidFilterItem = item => !!item && (item.type || typeof item === 'function');
 
@@ -284,4 +285,4 @@ const FilterLines = ({ className, list = [], displayLine = 1, label, extra, chil
   );
 };
 
-export default FilterLines;
+export default withLocale(FilterLines);
