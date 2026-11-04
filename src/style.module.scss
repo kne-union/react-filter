@@ -982,7 +982,7 @@
       align-items: center;
       flex-wrap: nowrap;
       gap: 6px;
-      min-height: 28px;
+      min-height: 32px;
       overflow-x: auto;
       overflow-y: hidden;
       scroll-padding-inline: 8px 24px;
@@ -999,7 +999,10 @@
       }
 
       .filter-value-tag {
+        --font-size-small: 13px;
         flex: 0 0 auto;
+        padding: 3px 10px;
+        line-height: 22px;
       }
     }
 
@@ -1053,7 +1056,7 @@
       height: auto;
       padding: 0;
       color: var(--primary-color, #1890ff);
-      font-size: var(--font-size-small, 12px);
+      font-size: 13px;
       line-height: 1;
     }
   }
@@ -1192,14 +1195,25 @@
     height: auto;
   }
 
+  // 触控尺寸参考 antd-mobile：文字 14px，筛选项高 32px；label/icon 字号取自 --font-size-small
+  .filter-item-label {
+    line-height: 22px;
+  }
+
   .filter-item {
+    --font-size-small: 14px;
     height: auto;
-    min-height: 28px;
-    padding: 4px 12px;
+    min-height: 32px;
+    padding: 4px 14px;
     border-radius: 999px;
     background: var(--bg-color-grey-1, #f5f5f5);
     display: flex;
     align-items: center;
+
+    :global(.ant-space-item) {
+      font-size: 14px;
+      line-height: 22px;
+    }
 
     &.is-active {
       color: var(--primary-color, #1890ff);
